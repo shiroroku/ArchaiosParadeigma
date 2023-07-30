@@ -74,8 +74,8 @@ public class CastingOverlayInputHandler {
      */
     public static void onOverlayMouseScroll(double delta) {
         if (inCastOverlay) {
-            int scroll = (overlay.get().selectedSpell - (int) delta) % 6;
-            overlay.get().selectedSpell = scroll < 0 ? 5 : scroll;
+            int scroll = (overlay.get().selectedSpellIndex - (int) delta) % 6;
+            overlay.get().selectedSpellIndex = scroll < 0 ? 5 : scroll;
         }
     }
 
@@ -89,7 +89,7 @@ public class CastingOverlayInputHandler {
             for (int i = 0; i < Math.min(6, mc.options.keyHotbarSlots.length); i++) {
                 while (mc.options.keyHotbarSlots[i].consumeClick()) {
                     if (inCastOverlay) {
-                        overlay.get().selectedSpell = i;
+                        overlay.get().selectedSpellIndex = i;
                     }
                 }
             }
