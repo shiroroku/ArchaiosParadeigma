@@ -2,6 +2,7 @@ package teamforesight.arcpara.Client.CastingOverlay;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.util.Lazy;
@@ -10,6 +11,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 import teamforesight.arcpara.ArcPara;
+import teamforesight.arcpara.Capability.ISpellCaster;
+import teamforesight.arcpara.Network.SpellCastPacket;
+import teamforesight.arcpara.Registry.CapabilityRegistry;
+import teamforesight.arcpara.SetupNetwork;
 
 @Mod.EventBusSubscriber(modid = ArcPara.MODID, value = Dist.CLIENT)
 public class CastingOverlayInputHandler {
@@ -51,19 +56,25 @@ public class CastingOverlayInputHandler {
     @SubscribeEvent
     public static void onMousePress(InputEvent.MouseButton.Pre event) {
         if (inCastOverlay) {
+            ISpellCaster cap = CapabilityRegistry.getSpellCaster(Minecraft.getInstance().player).orElse(null);
+            ResourceLocation equippedSpell = ResourceLocation.tryParse(cap.getEquippedSpells()[overlay.get().selectedSpellIndex]);
             if (event.getAction() == InputConstants.PRESS) {
                 if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-                    ArcPara.LOGGER.debug("Start Cast primary");
+                    ArcPara.LOGGER.debug("[Client][{}] Start Cast primary", equippedSpell.toString());
+                    SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), true, true));
                 }
                 if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-                    ArcPara.LOGGER.debug("Start Cast secondary");
+                    ArcPara.LOGGER.debug("[Client][{}] Start Cast secondary", equippedSpell.toString());
+                    SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), true, false));
                 }
             } else {
                 if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-                    ArcPara.LOGGER.debug("End Cast primary");
+                    ArcPara.LOGGER.debug("[Client][{}] End Cast primary", equippedSpell.toString());
+                    SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), false, true));
                 }
                 if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-                    ArcPara.LOGGER.debug("End Cast secondary");
+                    ArcPara.LOGGER.debug("[Client][{}] End Cast secondary", equippedSpell.toString());
+                    SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), false, false));
                 }
             }
         }

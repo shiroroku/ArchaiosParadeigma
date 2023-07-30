@@ -15,17 +15,17 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class SpellCasterPacket {
+public class SyncCapabilityPacket {
     public ISpellCaster spell_caster;
     UUID player;
 
-    public SpellCasterPacket(ISpellCaster spell_caster, UUID player) {
+    public SyncCapabilityPacket(ISpellCaster spell_caster, UUID player) {
         this.spell_caster = spell_caster;
         this.player = player;
     }
 
-    public static SpellCasterPacket decode(FriendlyByteBuf buf) {
-        return new SpellCasterPacket(new SpellCasterCapability(buf.readNbt()), buf.readUUID());
+    public static SyncCapabilityPacket decode(FriendlyByteBuf buf) {
+        return new SyncCapabilityPacket(new SpellCasterCapability(buf.readNbt()), buf.readUUID());
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -34,7 +34,7 @@ public class SpellCasterPacket {
     }
 
     public static class Handler {
-        public static void onMessageReceived(final SpellCasterPacket message, Supplier<NetworkEvent.Context> ctxSupplier) {
+        public static void onMessageReceived(final SyncCapabilityPacket message, Supplier<NetworkEvent.Context> ctxSupplier) {
             NetworkEvent.Context ctx = ctxSupplier.get();
             ctx.enqueueWork(() -> {
                 LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
@@ -51,7 +51,7 @@ public class SpellCasterPacket {
             ctx.setPacketHandled(true);
         }
 
-        private static void processMessage(Level worldClient, SpellCasterPacket message) {
+        private static void processMessage(Level worldClient, SyncCapabilityPacket message) {
             CapabilityRegistry.getSpellCaster(worldClient.getPlayerByUUID(message.player)).ifPresent(cap -> {
                 cap.setMaxMana(message.spell_caster.getMaxMana());
                 cap.setMana(message.spell_caster.getMana());

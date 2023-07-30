@@ -7,7 +7,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
-import teamforesight.arcpara.Network.SpellCasterPacket;
+import teamforesight.arcpara.Network.SpellCastPacket;
+import teamforesight.arcpara.Network.SyncCapabilityPacket;
 
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ public class SetupNetwork {
     public static void setup(final FMLCommonSetupEvent event) {
         CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(ArcPara.MODID, "channel"), () -> "1.0", s -> true, s -> true);
         int id = 0;
-        CHANNEL.registerMessage(id++, SpellCasterPacket.class, SpellCasterPacket::encode, SpellCasterPacket::decode, SpellCasterPacket.Handler::onMessageReceived, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(id++, SyncCapabilityPacket.class, SyncCapabilityPacket::encode, SyncCapabilityPacket::decode, SyncCapabilityPacket.Handler::onMessageReceived, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(id++, SpellCastPacket.class, SpellCastPacket::encode, SpellCastPacket::decode, SpellCastPacket.Handler::onMessageReceived, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 }
