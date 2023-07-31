@@ -1,7 +1,11 @@
 package teamforesight.arcpara.Capability;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
+import teamforesight.arcpara.Spell.Spell;
+
+import java.util.List;
 
 public interface ISpellCaster extends INBTSerializable<CompoundTag> {
 
@@ -19,11 +23,17 @@ public interface ISpellCaster extends INBTSerializable<CompoundTag> {
 
 	void addMana(float amount);
 
+	Spell getSpell(ResourceLocation id);
+
+	void setSpells(List<Spell> spells);
+
+	List<Spell> getSpells();
+
 	String[] getEquippedSpells();
 
 	void setEquippedSpells(String[] spells);
 
-	void setSpell(int slot, String spell_id);
+	void setEquippedSpell(int slot, String spell_id);
 
-	String getSpell(int slot);
+	String getEquippedSpell(int slot);
 }

@@ -10,7 +10,6 @@ import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.Capability.ISpellCaster;
 import teamforesight.arcpara.ModUtil;
 import teamforesight.arcpara.Registry.CapabilityRegistry;
-import teamforesight.arcpara.Registry.SpellRegistry;
 import teamforesight.arcpara.Spell.Spell;
 
 public class CastingOverlayRenderer extends Overlay {
@@ -68,11 +67,11 @@ public class CastingOverlayRenderer extends Overlay {
 		}
 		pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 31, (int) (pGuiGraphics.guiHeight() * 0.5f - 61), 46, 0, 8, 122);
 
-		Spell spell = SpellRegistry.getSpell(ResourceLocation.tryParse(cap.getEquippedSpells()[selectedSpellIndex]));
+		Spell spell = cap.getSpell(ResourceLocation.tryParse(cap.getEquippedSpells()[selectedSpellIndex]));
 		float transparency = ModUtil.waveFunc(0.3f) * 0.25f + 0.5f;
 		RenderSystem.setShaderColor(0.25f, 0.6f, 1, transparency);
 		if (spell != null) {
-			if (spell.manaCost > cap.getMana()) {
+			if (spell.manaCostPrimary > cap.getMana()) {
 				RenderSystem.setShaderColor(1, 0f, 0f, transparency);
 			}
 		}

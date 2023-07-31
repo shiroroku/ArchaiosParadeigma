@@ -56,6 +56,7 @@ public class SyncCapabilityPacket {
 				cap.setMaxMana(message.spell_caster.getMaxMana());
 				cap.setMana(message.spell_caster.getMana());
 				cap.setEquippedSpells(message.spell_caster.getEquippedSpells());
+				cap.setSpells(message.spell_caster.getSpells());
 			});
 		}
 	}

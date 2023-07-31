@@ -10,19 +10,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.ModUtil;
 import teamforesight.arcpara.Spell.Spell;
 
 public class SparkSpell extends Spell {
 	public SparkSpell() {
-		super(new ResourceLocation(ArcPara.MODID, "spark"), 25f);
+		super(new ResourceLocation(ArcPara.MODID, "spark"), 25f, 25f);
 	}
 
 	@Override
-	public void castStart(Player player, Vec3 angle, boolean isPrimary) {
-		super.castStart(player, angle, isPrimary);
+	public void castStart(Player player, boolean isPrimary) {
 		Level level = player.level();
 		float distance = 5;
 
@@ -31,7 +29,7 @@ public class SparkSpell extends Spell {
 			e.setSecondsOnFire(2);
 			level.playSound(null, e, SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.1F);
 			level.playSound(null, e, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.6F);
-			consumeMana(player, manaCost);
+			consumeMana(player, manaCostPrimary);
 			return;
 		}
 
@@ -41,8 +39,18 @@ public class SparkSpell extends Spell {
 			if (level.setBlock(hitpos, BaseFireBlock.getState(player.level(), hit.getBlockPos()), 3)) {
 				level.playSound(null, hitpos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.1F);
 				level.playSound(null, hitpos, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.6F);
-				consumeMana(player, manaCost);
+				consumeMana(player, manaCostPrimary);
 			}
 		}
+	}
+
+	@Override
+	public void castHold(Player player, boolean isPrimary) {
+
+	}
+
+	@Override
+	public void castEnd(Player player, boolean isPrimary, int chargeDuration) {
+
 	}
 }
