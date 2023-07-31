@@ -14,10 +14,10 @@ import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.Capability.ISpellCaster;
 import teamforesight.arcpara.Client.CastingOverlay.ResearchTree.ResearchTreeScreen;
 import teamforesight.arcpara.Client.KeyMappingRegistry;
+import teamforesight.arcpara.Network.NetworkSetup;
 import teamforesight.arcpara.Network.SpellCastPacket;
 import teamforesight.arcpara.Registry.CapabilityRegistry;
 import teamforesight.arcpara.Registry.SpellRegistry;
-import teamforesight.arcpara.SetupNetwork;
 import teamforesight.arcpara.Spell.Spell;
 
 @Mod.EventBusSubscriber(modid = ArcPara.MODID, value = Dist.CLIENT)
@@ -75,24 +75,24 @@ public class CastingOverlayInputHandler {
 					if (!spell.canCast(Minecraft.getInstance().player, true)) {
 						return;
 					}
-					SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), true, true));
+					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), true, true));
 				}
 				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 					ArcPara.LOGGER.debug("[Client][{}] Start Cast secondary", equippedSpell.toString());
 					if (!spell.canCast(Minecraft.getInstance().player, false)) {
 						return;
 					}
-					SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), true, false));
+					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), true, false));
 				}
 			} else {
 				// MOUSE RELEASE
 				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
 					ArcPara.LOGGER.debug("[Client][{}] End Cast primary", equippedSpell.toString());
-					SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), false, true));
+					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), false, true));
 				}
 				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 					ArcPara.LOGGER.debug("[Client][{}] End Cast secondary", equippedSpell.toString());
-					SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), false, false));
+					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), false, false));
 				}
 			}
 		}
@@ -115,16 +115,17 @@ public class CastingOverlayInputHandler {
 	public static void onClientTickEnd(TickEvent.ClientTickEvent event) {
 		if (event.phase == TickEvent.Phase.START) {
 			Minecraft mc = Minecraft.getInstance();
-			if (mc.options.keyInventory.isDown()) {
-				if (inCastOverlay) {
+			// We use isdown instead of consumeclick because for some reason consumeclick overrides vanilla binds.
+			if (inCastOverlay) {
+				//Research Tree
+				if (mc.options.keyInventory.isDown()) {
 					Minecraft.getInstance().setScreen(new ResearchTreeScreen());
 					disableOverlay();
+					return;
 				}
-			}
-
-			for (int i = 0; i < Math.min(6, mc.options.keyHotbarSlots.length); i++) {
-				if (mc.options.keyHotbarSlots[i].isDown()) {
-					if (inCastOverlay) {
+				//Spellbar 1-6
+				for (int i = 0; i < 6; i++) {
+					if (mc.options.keyHotbarSlots[i].isDown()) {
 						overlay.get().selectedSpellIndex = i;
 					}
 				}

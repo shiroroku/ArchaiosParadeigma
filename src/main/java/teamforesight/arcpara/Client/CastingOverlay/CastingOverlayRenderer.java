@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.TickEvent;
 import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.Capability.ISpellCaster;
 import teamforesight.arcpara.ModUtil;
@@ -18,6 +19,10 @@ public class CastingOverlayRenderer extends Overlay {
 	private final Minecraft minecraft;
 	public int selectedSpellIndex = 0;
 
+	/**
+	 * Opened on inventory button when in casting mode
+	 * @see CastingOverlayInputHandler#onClientTickEnd(TickEvent.ClientTickEvent) 
+	 */
 	public CastingOverlayRenderer(Minecraft minecraft) {
 		this.minecraft = minecraft;
 	}

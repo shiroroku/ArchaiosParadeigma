@@ -20,8 +20,8 @@ import net.minecraftforge.network.PacketDistributor;
 import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.Capability.ISpellCaster;
 import teamforesight.arcpara.Capability.SpellCasterCapability;
+import teamforesight.arcpara.Network.NetworkSetup;
 import teamforesight.arcpara.Network.SyncCapabilityPacket;
-import teamforesight.arcpara.SetupNetwork;
 
 @Mod.EventBusSubscriber(modid = ArcPara.MODID)
 public class CapabilityRegistry {
@@ -67,7 +67,7 @@ public class CapabilityRegistry {
 
 	public static void sendCapabilityPacket(Player player) {
 		if (EffectiveSide.get() == LogicalSide.SERVER && player instanceof ServerPlayer serverPlayer) {
-			SetupNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncCapabilityPacket(CapabilityRegistry.getSpellCaster(player).orElse(new SpellCasterCapability()), player.getUUID()));
+			NetworkSetup.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncCapabilityPacket(CapabilityRegistry.getSpellCaster(player).orElse(new SpellCasterCapability()), player.getUUID()));
 		}
 	}
 }

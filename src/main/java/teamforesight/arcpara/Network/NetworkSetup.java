@@ -1,4 +1,4 @@
-package teamforesight.arcpara;
+package teamforesight.arcpara.Network;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -7,13 +7,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
-import teamforesight.arcpara.Network.SpellCastPacket;
-import teamforesight.arcpara.Network.SyncCapabilityPacket;
+import teamforesight.arcpara.ArcPara;
 
 import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = ArcPara.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class SetupNetwork {
+public class NetworkSetup {
 	public static SimpleChannel CHANNEL;
 
 	@SubscribeEvent
