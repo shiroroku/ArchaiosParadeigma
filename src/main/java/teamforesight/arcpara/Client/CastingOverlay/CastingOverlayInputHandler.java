@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.Capability.ISpellCaster;
+import teamforesight.arcpara.Client.CastingOverlay.ResearchTree.ResearchTreeScreen;
+import teamforesight.arcpara.Client.KeyMappingRegistry;
 import teamforesight.arcpara.Network.SpellCastPacket;
 import teamforesight.arcpara.Registry.CapabilityRegistry;
 import teamforesight.arcpara.Registry.SpellRegistry;
@@ -107,14 +109,21 @@ public class CastingOverlayInputHandler {
     }
 
     /**
-     * Changes selected spell on keys 1-6.
+     * Changes selected spell on keys 1-6. Also opens research tree on inventory.
      */
     @SubscribeEvent
     public static void onClientTickEnd(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             Minecraft mc = Minecraft.getInstance();
+            if (mc.options.keyInventory.isDown()){
+                if (inCastOverlay) {
+                    Minecraft.getInstance().setScreen(new ResearchTreeScreen());
+                    disableOverlay();
+                }
+            }
+
             for (int i = 0; i < Math.min(6, mc.options.keyHotbarSlots.length); i++) {
-                while (mc.options.keyHotbarSlots[i].consumeClick()) {
+                if (mc.options.keyHotbarSlots[i].isDown()) {
                     if (inCastOverlay) {
                         overlay.get().selectedSpellIndex = i;
                     }

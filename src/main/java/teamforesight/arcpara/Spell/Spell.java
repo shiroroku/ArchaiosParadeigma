@@ -18,14 +18,17 @@ public class Spell {
 
     public void castStart(Player player, Vec3 angle, boolean isPrimary) {
         ArcPara.LOGGER.debug("[{}][{}] Starting cast.", id.toString(), isPrimary);
-        CapabilityRegistry.getSpellCaster(player).ifPresent(p -> {
-            p.spendMana(manaCost);
-            CapabilityRegistry.sendCapabilityPacket(player);
-        });
     }
 
     public void castStop(Player player, Vec3 angle, boolean isPrimary) {
         ArcPara.LOGGER.debug("[{}][{}] Stopping cast.", id.toString(), isPrimary);
+    }
+
+    protected void consumeMana(Player player, float amount){
+        CapabilityRegistry.getSpellCaster(player).ifPresent(p -> {
+            p.spendMana(amount);
+            CapabilityRegistry.sendCapabilityPacket(player);
+        });
     }
 
     public boolean canCast(Player player, boolean isPrimary) {

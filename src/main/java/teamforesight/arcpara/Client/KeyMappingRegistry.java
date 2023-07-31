@@ -1,4 +1,4 @@
-package teamforesight.arcpara.Client.CastingOverlay;
+package teamforesight.arcpara.Client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;

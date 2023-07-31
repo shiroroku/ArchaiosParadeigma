@@ -31,6 +31,7 @@ public class SparkSpell extends Spell {
             e.setSecondsOnFire(2);
             level.playSound(null, e, SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.1F);
             level.playSound(null, e, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.6F);
+            consumeMana(player, manaCost);
             return;
         }
 
@@ -40,6 +41,7 @@ public class SparkSpell extends Spell {
             if (level.setBlock(hitpos, BaseFireBlock.getState(player.level(), hit.getBlockPos()), 3)) {
                 level.playSound(null, hitpos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.1F);
                 level.playSound(null, hitpos, SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.6F);
+                consumeMana(player, manaCost);
             }
         }
     }
