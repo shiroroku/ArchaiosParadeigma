@@ -34,6 +34,8 @@ public class CastingOverlayRenderer extends Overlay {
         RenderSystem.enableBlend();
         renderSpellBar(pGuiGraphics, pPartialTick, cap);
         renderManaBar(pGuiGraphics, pPartialTick, cap);
+
+
         RenderSystem.disableBlend();
     }
 
@@ -46,12 +48,20 @@ public class CastingOverlayRenderer extends Overlay {
             String spell = cap.getEquippedSpells()[i];
             if (!spell.isEmpty() && !spell.equals("empty")) {
                 ResourceLocation spell_id = ResourceLocation.tryParse(spell);
+                if (minecraft.options.renderDebug) {
+                    //Debug info
+                    pGuiGraphics.drawCenteredString(minecraft.font, spell_id.toString(), pGuiGraphics.guiWidth() - 100, (int) (pGuiGraphics.guiHeight() * 0.5f - 55 + (20 * i)), 13158655);
+                }
                 pGuiGraphics.blit(new ResourceLocation(spell_id.getNamespace(), "textures/gui/spells/%s.png".formatted(spell_id.getPath())), pGuiGraphics.guiWidth() - 19, (int) (pGuiGraphics.guiHeight() * 0.5f - 58 + (20 * i)), 0, 0, 16, 16, 16, 16);
             }
         }
     }
 
     private void renderManaBar(GuiGraphics pGuiGraphics, float pPartialTick, ISpellCaster cap) {
+        if (minecraft.options.renderDebug) {
+            //Debug info
+            pGuiGraphics.drawCenteredString(minecraft.font, "%d/%d".formatted((int) cap.getMana(), (int) cap.getMaxMana()), pGuiGraphics.guiWidth() - 27, (int) (pGuiGraphics.guiHeight() * 0.5f - 70), 13158655);
+        }
         pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 31, (int) (pGuiGraphics.guiHeight() * 0.5f - 61), 46, 0, 8, 122);
         RenderSystem.setShaderColor(1, 1, 1, 0.5f);
         double guiScale = minecraft.getWindow().getGuiScale();
