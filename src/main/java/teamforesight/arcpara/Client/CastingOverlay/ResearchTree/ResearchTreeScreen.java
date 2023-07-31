@@ -1,11 +1,13 @@
 package teamforesight.arcpara.Client.CastingOverlay.ResearchTree;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import teamforesight.arcpara.ArcPara;
@@ -27,10 +29,25 @@ public class ResearchTreeScreen extends Screen {
 		super(GameNarrator.NO_TITLE);
 	}
 
+	@Override
 	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
 		view_x += pDragX;
 		view_y += pDragY;
 		return true;
+	}
+
+	/**
+	 * Handles closing the menu when inventory key is pressed
+	 */
+	@Override
+	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
+		if (super.keyPressed(pKeyCode, pScanCode, pModifiers)) {
+			return true;
+		} else if (this.minecraft.options.keyInventory.isActiveAndMatches(InputConstants.getKey(pKeyCode, pScanCode))) {
+			this.onClose();
+			return true;
+		}
+		return false;
 	}
 
 	@Override
