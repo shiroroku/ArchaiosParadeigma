@@ -1,15 +1,15 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "teamforesight.arcpara.Mixin",
-  "compatibilityLevel": "JAVA_8",
-  "refmap": "arcpara.refmap.json",
-  "mixins": [
-  ],
-  "client": [
-    "MouseHandlerMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+	"required": true,
+	"minVersion": "0.8",
+	"package": "teamforesight.arcpara.Mixin",
+	"compatibilityLevel": "JAVA_8",
+	"refmap": "arcpara.refmap.json",
+	"mixins": [
+	],
+	"client": [
+		"MouseHandlerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
 }

@@ -14,25 +14,26 @@ import teamforesight.arcpara.Client.CastingOverlay.CastingOverlayRenderer;
 @Mixin(MouseHandler.class)
 public class MouseHandlerMixin {
 
-    @Shadow
-    @Final
-    private Minecraft minecraft;
+	@Shadow
+	@Final
+	private Minecraft minecraft;
 
-    /**
-     * Custom hook which bybasses the "overlay == null" check. (because we use overlay duh)
-     * @see CastingOverlayInputHandler#onOverlayMouseScroll(double)
-     */
-    @Inject(at = @At("HEAD"), method = "onScroll(JDD)V")
-    private void onScroll(long pWindowPointer, double pXOffset, double pYOffset, CallbackInfo ci) {
-        if (pWindowPointer == Minecraft.getInstance().getWindow().getWindow()) {
-            if (minecraft.getOverlay() instanceof CastingOverlayRenderer) {
-                double offset = pYOffset;
-                if (Minecraft.ON_OSX && pYOffset == 0) {
-                    offset = pXOffset;
-                }
-                double d0 = (this.minecraft.options.discreteMouseScroll().get() ? Math.signum(offset) : offset) * this.minecraft.options.mouseWheelSensitivity().get();
-                CastingOverlayInputHandler.onOverlayMouseScroll(d0);
-            }
-        }
-    }
+	/**
+	 * Custom hook which bybasses the "overlay == null" check. (because we use overlay duh)
+	 *
+	 * @see CastingOverlayInputHandler#onOverlayMouseScroll(double)
+	 */
+	@Inject(at = @At("HEAD"), method = "onScroll(JDD)V")
+	private void onScroll(long pWindowPointer, double pXOffset, double pYOffset, CallbackInfo ci) {
+		if (pWindowPointer == Minecraft.getInstance().getWindow().getWindow()) {
+			if (minecraft.getOverlay() instanceof CastingOverlayRenderer) {
+				double offset = pYOffset;
+				if (Minecraft.ON_OSX && pYOffset == 0) {
+					offset = pXOffset;
+				}
+				double d0 = (this.minecraft.options.discreteMouseScroll().get() ? Math.signum(offset) : offset) * this.minecraft.options.mouseWheelSensitivity().get();
+				CastingOverlayInputHandler.onOverlayMouseScroll(d0);
+			}
+		}
+	}
 }

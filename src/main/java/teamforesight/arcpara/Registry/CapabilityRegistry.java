@@ -26,48 +26,48 @@ import teamforesight.arcpara.SetupNetwork;
 @Mod.EventBusSubscriber(modid = ArcPara.MODID)
 public class CapabilityRegistry {
 
-    public static final Capability<ISpellCaster> spell_caster = CapabilityManager.get(new CapabilityToken<>() {
-    });
+	public static final Capability<ISpellCaster> spell_caster = CapabilityManager.get(new CapabilityToken<>() {
+	});
 
-    @SubscribeEvent
-    public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player) {
-            event.addCapability(new ResourceLocation(ArcPara.MODID, "spell_caster"), new SpellCasterCapability.Provider());
-        }
-    }
+	@SubscribeEvent
+	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event) {
+		if (event.getObject() instanceof Player) {
+			event.addCapability(new ResourceLocation(ArcPara.MODID, "spell_caster"), new SpellCasterCapability.Provider());
+		}
+	}
 
-    @SubscribeEvent
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.register(ISpellCaster.class);
-    }
+	@SubscribeEvent
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.register(ISpellCaster.class);
+	}
 
-    public static LazyOptional<ISpellCaster> getSpellCaster(LivingEntity entity) {
-        return entity.getCapability(spell_caster);
-    }
+	public static LazyOptional<ISpellCaster> getSpellCaster(LivingEntity entity) {
+		return entity.getCapability(spell_caster);
+	}
 
-    @SubscribeEvent
-    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        sendCapabilityPacket(event.getEntity());
-    }
+	@SubscribeEvent
+	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+		sendCapabilityPacket(event.getEntity());
+	}
 
-    @SubscribeEvent
-    public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-        sendCapabilityPacket(event.getEntity());
-    }
+	@SubscribeEvent
+	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		sendCapabilityPacket(event.getEntity());
+	}
 
-    @SubscribeEvent
-    public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
-        sendCapabilityPacket(event.getEntity());
-    }
+	@SubscribeEvent
+	public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
+		sendCapabilityPacket(event.getEntity());
+	}
 
-    @SubscribeEvent
-    public static void onPlayerDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
-        sendCapabilityPacket(event.getEntity());
-    }
+	@SubscribeEvent
+	public static void onPlayerDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event) {
+		sendCapabilityPacket(event.getEntity());
+	}
 
-    public static void sendCapabilityPacket(Player player) {
-        if (EffectiveSide.get() == LogicalSide.SERVER && player instanceof ServerPlayer serverPlayer) {
-            SetupNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncCapabilityPacket(CapabilityRegistry.getSpellCaster(player).orElse(new SpellCasterCapability()), player.getUUID()));
-        }
-    }
+	public static void sendCapabilityPacket(Player player) {
+		if (EffectiveSide.get() == LogicalSide.SERVER && player instanceof ServerPlayer serverPlayer) {
+			SetupNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncCapabilityPacket(CapabilityRegistry.getSpellCaster(player).orElse(new SpellCasterCapability()), player.getUUID()));
+		}
+	}
 }

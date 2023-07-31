@@ -4,26 +4,26 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.INBTSerializable;
 
 public interface ISpellCaster extends INBTSerializable<CompoundTag> {
-    
-    float getMaxMana();
 
-    void setMaxMana(float amount);
+	float getMaxMana();
 
-    float getMana();
+	void setMaxMana(float amount);
 
-    void setMana(float amount);
+	float getMana();
 
-    boolean canSpendMana(float amount);
+	void setMana(float amount);
 
-    void spendMana(float amount);
+	boolean canSpendMana(float amount);
 
-    void addMana(float amount);
+	void spendMana(float amount);
 
-    String[] getEquippedSpells();
+	void addMana(float amount);
 
-    void setEquippedSpells(String[] spells);
+	String[] getEquippedSpells();
 
-    void setSpell(int slot, String spell_id);
+	void setEquippedSpells(String[] spells);
 
-    String getSpell(int slot);
+	void setSpell(int slot, String spell_id);
+
+	String getSpell(int slot);
 }

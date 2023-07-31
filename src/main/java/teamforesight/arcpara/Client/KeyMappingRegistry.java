@@ -14,17 +14,17 @@ import teamforesight.arcpara.ArcPara;
 @Mod.EventBusSubscriber(modid = ArcPara.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class KeyMappingRegistry {
 
-    public static final Lazy<KeyMapping> CAST_MODE = Lazy.of(() ->
-            new KeyMapping(
-                    "key.arcpara.cast_mode",
-                    KeyConflictContext.IN_GAME,
-                    InputConstants.Type.KEYSYM,
-                    GLFW.GLFW_KEY_LEFT_ALT,
-                    "key.categories.arcpara.category"
-            ));
+	public static final Lazy<KeyMapping> CAST_MODE = Lazy.of(() ->
+			new KeyMapping(
+					"key.arcpara.cast_mode",
+					KeyConflictContext.IN_GAME,
+					InputConstants.Type.KEYSYM,
+					GLFW.GLFW_KEY_LEFT_ALT,
+					"key.categories.arcpara.category"
+			));
 
-    @SubscribeEvent
-    public static void registerBindings(RegisterKeyMappingsEvent event) {
-        event.register(CAST_MODE.get());
-    }
+	@SubscribeEvent
+	public static void registerBindings(RegisterKeyMappingsEvent event) {
+		event.register(CAST_MODE.get());
+	}
 }

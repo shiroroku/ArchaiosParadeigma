@@ -9,18 +9,18 @@ import java.util.Optional;
 
 public class SpellRegistry {
 
-    public enum SPELLS {
-        spark(new SparkSpell());
+	public enum SPELLS {
+		spark(new SparkSpell());
 
-        public final Spell spell;
+		public final Spell spell;
 
-        SPELLS(Spell spell) {
-            this.spell = spell;
-        }
-    }
+		SPELLS(Spell spell) {
+			this.spell = spell;
+		}
+	}
 
-    public static Spell getSpell(ResourceLocation id) {
-        Optional<Spell> search = Arrays.stream(SPELLS.values()).filter(s -> s.spell.id.equals(id)).findFirst().map(spells -> spells.spell);
-        return search.orElse(null);
-    }
+	public static Spell getSpell(ResourceLocation id) {
+		Optional<Spell> search = Arrays.stream(SPELLS.values()).filter(s -> s.spell.id.equals(id)).findFirst().map(spells -> spells.spell);
+		return search.orElse(null);
+	}
 }

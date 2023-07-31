@@ -14,13 +14,13 @@ import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = ArcPara.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SetupNetwork {
-    public static SimpleChannel CHANNEL;
+	public static SimpleChannel CHANNEL;
 
-    @SubscribeEvent
-    public static void setup(final FMLCommonSetupEvent event) {
-        CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(ArcPara.MODID, "channel"), () -> "1.0", s -> true, s -> true);
-        int id = 0;
-        CHANNEL.registerMessage(id++, SyncCapabilityPacket.class, SyncCapabilityPacket::encode, SyncCapabilityPacket::decode, SyncCapabilityPacket.Handler::onMessageReceived, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-        CHANNEL.registerMessage(id++, SpellCastPacket.class, SpellCastPacket::encode, SpellCastPacket::decode, SpellCastPacket.Handler::onMessageReceived, Optional.of(NetworkDirection.PLAY_TO_SERVER));
-    }
+	@SubscribeEvent
+	public static void setup(final FMLCommonSetupEvent event) {
+		CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(ArcPara.MODID, "channel"), () -> "1.0", s -> true, s -> true);
+		int id = 0;
+		CHANNEL.registerMessage(id++, SyncCapabilityPacket.class, SyncCapabilityPacket::encode, SyncCapabilityPacket::decode, SyncCapabilityPacket.Handler::onMessageReceived, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		CHANNEL.registerMessage(id++, SpellCastPacket.class, SpellCastPacket::encode, SpellCastPacket::decode, SpellCastPacket.Handler::onMessageReceived, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+	}
 }
