@@ -20,7 +20,8 @@ public class CastingOverlayRenderer extends Overlay {
 
 	/**
 	 * Opened on inventory button when in casting mode
-	 * @see CastingOverlayInputHandler#onClientTickEnd(TickEvent.ClientTickEvent) 
+	 *
+	 * @see CastingOverlayInputHandler#onClientTickEnd(TickEvent.ClientTickEvent)
 	 */
 	public CastingOverlayRenderer(Minecraft minecraft) {
 		this.minecraft = minecraft;
@@ -39,12 +40,12 @@ public class CastingOverlayRenderer extends Overlay {
 		}
 
 		RenderSystem.enableBlend();
-		renderSpellBar(pGuiGraphics, pPartialTick, cap);
-		renderManaBar(pGuiGraphics, pPartialTick, cap);
+		renderSpellBar(pGuiGraphics, cap);
+		renderManaBar(pGuiGraphics, cap);
 		RenderSystem.disableBlend();
 	}
 
-	private void renderSpellBar(GuiGraphics pGuiGraphics, float pPartialTick, ISpellCaster cap) {
+	private void renderSpellBar(GuiGraphics pGuiGraphics, ISpellCaster cap) {
 		pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 22, (int) (pGuiGraphics.guiHeight() * 0.5f - 61), 0, 0, 22, 122);
 		pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 23, (int) (pGuiGraphics.guiHeight() * 0.5f - 62 + (20 * selectedSpellIndex)), 22, 0, 22, 24);
 		for (int i = 0; i < 6; i++) {
@@ -60,7 +61,7 @@ public class CastingOverlayRenderer extends Overlay {
 		}
 	}
 
-	private void renderManaBar(GuiGraphics pGuiGraphics, float pPartialTick, ISpellCaster cap) {
+	private void renderManaBar(GuiGraphics pGuiGraphics, ISpellCaster cap) {
 		if (minecraft.options.renderDebug) {
 			//Debug info
 			pGuiGraphics.drawCenteredString(minecraft.font, "%d/%d".formatted((int) cap.getMana(), (int) cap.getMaxMana()), pGuiGraphics.guiWidth() - 27, (int) (pGuiGraphics.guiHeight() * 0.5f - 70), 13158655);
@@ -70,10 +71,8 @@ public class CastingOverlayRenderer extends Overlay {
 		Spell spell = cap.getSpell(ResourceLocation.tryParse(cap.getEquippedSpells()[selectedSpellIndex]));
 		float transparency = ModUtil.waveFunc(0.3f) * 0.25f + 0.5f;
 		RenderSystem.setShaderColor(0.25f, 0.6f, 1, transparency);
-		if (spell != null) {
-			if (spell.manaCostPrimary > cap.getMana()) {
-				RenderSystem.setShaderColor(1, 0f, 0f, transparency);
-			}
+		if (spell != null && spell.manaCostPrimary > cap.getMana()) {
+			RenderSystem.setShaderColor(1, 0f, 0f, transparency);
 		}
 		float perc = 1f - cap.getMana() / cap.getMaxMana();
 		float pixel_offset = perc * 122;

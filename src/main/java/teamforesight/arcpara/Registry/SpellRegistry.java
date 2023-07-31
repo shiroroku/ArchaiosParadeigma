@@ -31,7 +31,7 @@ public class SpellRegistry {
 	@SubscribeEvent
 	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.phase == TickEvent.Phase.START && event.side == LogicalSide.SERVER) {
-			CapabilityRegistry.getSpellCaster(event.player).ifPresent((cap) -> cap.getSpells().forEach(s -> {
+			CapabilityRegistry.getSpellCaster(event.player).ifPresent(cap -> cap.getSpells().forEach(s -> {
 				// Primary charge
 				if (s.isHoldingPrimary) { // Increase duration while holding is true, call spell function
 					s.chargeDurationPrimary++;

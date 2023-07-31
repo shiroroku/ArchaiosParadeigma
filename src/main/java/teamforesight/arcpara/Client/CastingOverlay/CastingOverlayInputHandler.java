@@ -68,7 +68,7 @@ public class CastingOverlayInputHandler {
 			if (event.getAction() == InputConstants.PRESS) {
 				// MOUSE PRESS
 				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-					ArcPara.LOGGER.debug("[Client][{}] Start Cast primary", equippedSpell.toString());
+					ArcPara.LOGGER.debug("[Client][{}] Start Cast primary", equippedSpell);
 					// A light check to see if we can cast this spell to save a packet
 					// The server ultimately decides in SpellCastPacket
 					if (spell.cantCast(Minecraft.getInstance().player, true)) {
@@ -77,7 +77,7 @@ public class CastingOverlayInputHandler {
 					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, true, true));
 				}
 				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-					ArcPara.LOGGER.debug("[Client][{}] Start Cast secondary", equippedSpell.toString());
+					ArcPara.LOGGER.debug("[Client][{}] Start Cast secondary", equippedSpell);
 					if (spell.cantCast(Minecraft.getInstance().player, false)) {
 						return;
 					}
@@ -86,11 +86,11 @@ public class CastingOverlayInputHandler {
 			} else {
 				// MOUSE RELEASE
 				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-					ArcPara.LOGGER.debug("[Client][{}] End Cast primary", equippedSpell.toString());
+					ArcPara.LOGGER.debug("[Client][{}] End Cast primary", equippedSpell);
 					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, false, true));
 				}
 				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-					ArcPara.LOGGER.debug("[Client][{}] End Cast secondary", equippedSpell.toString());
+					ArcPara.LOGGER.debug("[Client][{}] End Cast secondary", equippedSpell);
 					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, false, false));
 				}
 			}

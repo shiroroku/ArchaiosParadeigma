@@ -15,11 +15,11 @@ public class DebugSpell extends Spell {
 
 	@Override
 	public void castHold(Player player, boolean isPrimary) {
-		ArcPara.LOGGER.debug("Debug spell [{}] is holding for {} ticks", isPrimary ? "Primary" : "Secondary", getChargeDuration(isPrimary));
+		ArcPara.LOGGER.debug("[{}] Debug spell [{}] is holding for {} ticks", player.getStringUUID(), isPrimary ? "Primary" : "Secondary", getChargeDuration(isPrimary));
 	}
 
 	@Override
 	public void castEnd(Player player, boolean isPrimary, int chargeDuration) {
-		ArcPara.LOGGER.debug("Debug spell [{}] finished casting for {} ticks", isPrimary ? "Primary" : "Secondary", getChargeDuration(isPrimary));
+		ArcPara.LOGGER.debug("[{}] Debug spell [{}] finished casting for {} ticks", player.getStringUUID(), isPrimary ? "Primary" : "Secondary", getChargeDuration(isPrimary));
 	}
 }
