@@ -63,13 +63,18 @@ public class SpellCastPacket {
          * Recieved when the player clicks in casting overlay. Does some checks then casts the spell on server.
          */
         private static void processMessage(ServerPlayer player, SpellCastPacket message) {
+            // Make sure the spell the player is trying to cast exists
             Spell casting_spell = SpellRegistry.getSpell(message.spell);
             if (casting_spell == null) {
                 ArcPara.LOGGER.error("Recieved NULL spell cast packet from client!");
                 return;
             }
             CapabilityRegistry.getSpellCaster(player).ifPresent(p -> {
+                // Check if the player has the spell equipped
                 if (Arrays.stream(p.getEquippedSpells()).anyMatch(s -> s.equals(message.spell.toString()))) {
+                    if (!casting_spell.canCast(player, message.primary)) {
+                        return;
+                    }
                     if (message.phase) {
                         casting_spell.castStart(player, message.vector, message.primary);
                     } else {

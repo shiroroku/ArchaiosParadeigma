@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import teamforesight.arcpara.ArcPara;
+import teamforesight.arcpara.Registry.CapabilityRegistry;
 
 public class Spell {
 
@@ -17,9 +18,17 @@ public class Spell {
 
     public void castStart(Player player, Vec3 angle, boolean isPrimary) {
         ArcPara.LOGGER.debug("[{}][{}] Starting cast.", id.toString(), isPrimary);
+        CapabilityRegistry.getSpellCaster(player).ifPresent(p -> {
+            p.spendMana(manaCost);
+            CapabilityRegistry.sendCapabilityPacket(player);
+        });
     }
 
     public void castStop(Player player, Vec3 angle, boolean isPrimary) {
         ArcPara.LOGGER.debug("[{}][{}] Stopping cast.", id.toString(), isPrimary);
+    }
+
+    public boolean canCast(Player player, boolean isPrimary) {
+        return CapabilityRegistry.getSpellCaster(player).orElseGet(null).getMana() >= manaCost;
     }
 }

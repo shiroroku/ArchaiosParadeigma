@@ -17,17 +17,16 @@ import teamforesight.arcpara.Spell.Spell;
 
 public class SparkSpell extends Spell {
     public SparkSpell() {
-        super(new ResourceLocation(ArcPara.MODID, "spark"), 0);
+        super(new ResourceLocation(ArcPara.MODID, "spark"), 25f);
     }
 
     @Override
     public void castStart(Player player, Vec3 angle, boolean isPrimary) {
         super.castStart(player, angle, isPrimary);
         Level level = player.level();
-
         float distance = 5;
 
-        LivingEntity e = ModUtil.raycastLivingEntity(player, distance).orElseGet(null);
+        LivingEntity e = ModUtil.raycastLivingEntity(player, distance);
         if(e != null){
             e.setSecondsOnFire(2);
             level.playSound(null, e, SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.1F);
@@ -36,8 +35,6 @@ public class SparkSpell extends Spell {
         }
 
         BlockHitResult hit = ModUtil.raycastBlock(player, distance);
-
-        ArcPara.LOGGER.debug(hit.getType());
         BlockPos hitpos = hit.getBlockPos().above();
         if (hit.getType() == HitResult.Type.BLOCK && level.isEmptyBlock(hitpos)) {
             if (level.setBlock(hitpos, BaseFireBlock.getState(player.level(), hit.getBlockPos()), 3)) {

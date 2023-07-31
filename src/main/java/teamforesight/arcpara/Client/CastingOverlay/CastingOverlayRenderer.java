@@ -7,7 +7,10 @@ import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.resources.ResourceLocation;
 import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.Capability.ISpellCaster;
+import teamforesight.arcpara.ModUtil;
 import teamforesight.arcpara.Registry.CapabilityRegistry;
+import teamforesight.arcpara.Registry.SpellRegistry;
+import teamforesight.arcpara.Spell.Spell;
 
 public class CastingOverlayRenderer extends Overlay {
 
@@ -34,16 +37,12 @@ public class CastingOverlayRenderer extends Overlay {
         RenderSystem.enableBlend();
         renderSpellBar(pGuiGraphics, pPartialTick, cap);
         renderManaBar(pGuiGraphics, pPartialTick, cap);
-
-
         RenderSystem.disableBlend();
     }
 
     private void renderSpellBar(GuiGraphics pGuiGraphics, float pPartialTick, ISpellCaster cap) {
         pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 22, (int) (pGuiGraphics.guiHeight() * 0.5f - 61), 0, 0, 22, 122);
         pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 23, (int) (pGuiGraphics.guiHeight() * 0.5f - 62 + (20 * selectedSpellIndex)), 22, 0, 22, 24);
-
-        //Render spells
         for (int i = 0; i < 6; i++) {
             String spell = cap.getEquippedSpells()[i];
             if (!spell.isEmpty() && !spell.equals("empty")) {
@@ -63,13 +62,19 @@ public class CastingOverlayRenderer extends Overlay {
             pGuiGraphics.drawCenteredString(minecraft.font, "%d/%d".formatted((int) cap.getMana(), (int) cap.getMaxMana()), pGuiGraphics.guiWidth() - 27, (int) (pGuiGraphics.guiHeight() * 0.5f - 70), 13158655);
         }
         pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 31, (int) (pGuiGraphics.guiHeight() * 0.5f - 61), 46, 0, 8, 122);
-        RenderSystem.setShaderColor(1, 1, 1, 0.5f);
-        double guiScale = minecraft.getWindow().getGuiScale();
-        RenderSystem.enableScissor((int) ((pGuiGraphics.guiWidth() - 31) * guiScale), (int) ((pGuiGraphics.guiHeight() * 0.5f - 61) * guiScale), (int) (8 * guiScale), (int) (122 * guiScale));
-        float missing_mana_percentage = 1f - cap.getMana() / cap.getMaxMana();
-        pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 31, (int) ((pGuiGraphics.guiHeight() * 0.5f - 61) + missing_mana_percentage * 122), 54, 0, 8, 122);
+
+        Spell spell = SpellRegistry.getSpell(ResourceLocation.tryParse(cap.getEquippedSpells()[selectedSpellIndex]));
+        float transparency = ModUtil.waveFunc(0.3f) * 0.25f + 0.5f;
+        RenderSystem.setShaderColor(0.25f, 0.6f, 1, transparency);
+        if (spell != null) {
+            if (spell.manaCost > cap.getMana()) {
+                RenderSystem.setShaderColor(1, 0f, 0f, transparency);
+            }
+        }
+        float perc = 1f - cap.getMana() / cap.getMaxMana();
+        float pixel_offset = perc * 122;
+        pGuiGraphics.blit(OVERLAY, pGuiGraphics.guiWidth() - 29, (int) (pGuiGraphics.guiHeight() * 0.5f - 59 + pixel_offset), 56, 2, 6, (int) (119 - pixel_offset));
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.disableScissor();
     }
 
     @Override

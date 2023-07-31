@@ -1,5 +1,6 @@
 package teamforesight.arcpara;
 
+import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -9,7 +10,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ModUtil {
 
@@ -23,7 +23,7 @@ public class ModUtil {
         return level.clip(new ClipContext(eyePosition, raycast, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
     }
 
-    public static Optional<LivingEntity> raycastLivingEntity(Player player, float distance) {
+    public static LivingEntity raycastLivingEntity(Player player, float distance) {
         List<LivingEntity> entities = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBoxForCulling().inflate(distance));
         for (LivingEntity e : entities) {
             if (e.distanceToSqr(player) < distance * distance && e != player) {
@@ -33,11 +33,16 @@ public class ModUtil {
                 vec31 = vec31.normalize();
                 double d1 = normal_view.dot(vec31);
                 if (d1 > 0.95D - 0.025D / d0 && player.hasLineOfSight(e)) {
-                    return Optional.of(e);
+                    return e;
                 }
             }
         }
-        return Optional.empty();
+        return null;
+    }
+
+    //Sin wave in the range of 0 to 1
+    public static float waveFunc(float speed) {
+        return (Mth.sin(Mth.DEG_TO_RAD * Util.getMillis() * speed) + 1) / 2;
     }
 
 }

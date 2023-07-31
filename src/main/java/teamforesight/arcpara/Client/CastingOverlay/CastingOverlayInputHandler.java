@@ -14,7 +14,9 @@ import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.Capability.ISpellCaster;
 import teamforesight.arcpara.Network.SpellCastPacket;
 import teamforesight.arcpara.Registry.CapabilityRegistry;
+import teamforesight.arcpara.Registry.SpellRegistry;
 import teamforesight.arcpara.SetupNetwork;
+import teamforesight.arcpara.Spell.Spell;
 
 @Mod.EventBusSubscriber(modid = ArcPara.MODID, value = Dist.CLIENT)
 public class CastingOverlayInputHandler {
@@ -58,16 +60,30 @@ public class CastingOverlayInputHandler {
         if (inCastOverlay) {
             ISpellCaster cap = CapabilityRegistry.getSpellCaster(Minecraft.getInstance().player).orElse(null);
             ResourceLocation equippedSpell = ResourceLocation.tryParse(cap.getEquippedSpells()[overlay.get().selectedSpellIndex]);
+            Spell spell = SpellRegistry.getSpell(equippedSpell);
+            if (spell == null) {
+                return;
+            }
             if (event.getAction() == InputConstants.PRESS) {
+                // MOUSE PRESS
                 if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
                     ArcPara.LOGGER.debug("[Client][{}] Start Cast primary", equippedSpell.toString());
+                    // A light check to see if we can cast this spell to save a packet
+                    // The server ultimately decides in SpellCastPacket
+                    if (!spell.canCast(Minecraft.getInstance().player, true)) {
+                        return;
+                    }
                     SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), true, true));
                 }
                 if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
                     ArcPara.LOGGER.debug("[Client][{}] Start Cast secondary", equippedSpell.toString());
+                    if (!spell.canCast(Minecraft.getInstance().player, false)) {
+                        return;
+                    }
                     SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), true, false));
                 }
             } else {
+                // MOUSE RELEASE
                 if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
                     ArcPara.LOGGER.debug("[Client][{}] End Cast primary", equippedSpell.toString());
                     SetupNetwork.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, Minecraft.getInstance().player.getLookAngle(), false, true));
