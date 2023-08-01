@@ -2,13 +2,16 @@ package teamforesight.arcpara.Client.CastingOverlay.ResearchTree;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.math.Axis;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.joml.Vector2i;
 import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.ModUtil;
 
@@ -54,10 +57,6 @@ public class ResearchTreeScreen extends Screen {
 		int x = (this.width - WIDTH) / 2;
 		int y = (this.height - HEIGHT) / 2;
 		this.renderBackground(pGuiGraphics);
-
-		//pGuiGraphics.drawString(this.font, TITLE, pOffsetX + 8, pOffsetY + 6, 4210752, false);
-		//this.renderTooltips(pGuiGraphics, pMouseX, pMouseY, i, j);
-
 		this.renderContent(pGuiGraphics, x, y);
 		this.renderBorder(pGuiGraphics, x, y);
 		super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
@@ -85,31 +84,45 @@ public class ResearchTreeScreen extends Screen {
 		pGuiGraphics.blitRepeating(BACKGROUND_2, leftX, topY, WIDTH, HEIGHT, (int) -view_x, (int) -view_y, WIDTH, HEIGHT);
 		pGuiGraphics.setColor(1, 1, 1, 1);
 
-
-		//Render example Item with scale
-		float scale = transparency * 0.25f + 1;
-		pGuiGraphics.setColor(transparency, transparency, transparency, 1);
-		renderScaledItem(new ItemStack(Items.AMETHYST_BLOCK), pGuiGraphics, view_x + half_x, view_y + half_y, scale);
-		pGuiGraphics.setColor(1, 1, 1, 1);
-
-
-		//Render example Sprite
 		pGuiGraphics.pose().pushPose();
-		pGuiGraphics.pose().translate(view_x + transparency * 5 + 8, view_y + 0, 0);
-		pGuiGraphics.blit(BORDER, half_x, half_y - 8, 0, 224, 32, 16);
+		pGuiGraphics.pose().translate(view_x + half_x, view_y + half_y, 0);
+
+		Vector2i point1 = new Vector2i(-70, 60);
+		Vector2i point2 = new Vector2i(40, -20);
+		Vector2i point3 = new Vector2i(-60, -15);
+
+		renderScaledItem(new ItemStack(Items.AMETHYST_BLOCK), pGuiGraphics, point1.x, point1.y, 1);
+		renderScaledItem(new ItemStack(Items.ACACIA_LOG), pGuiGraphics, point2.x, point2.y, 1);
+		renderScaledItem(new ItemStack(Items.IRON_SWORD), pGuiGraphics, point3.x, point3.y, 1);
+
+		renderArrow(pGuiGraphics, point1, point2);
+		renderArrow(pGuiGraphics, point2, point3);
+		renderArrow(pGuiGraphics, point3, point1);
+
 		pGuiGraphics.pose().popPose();
 
 		//Debug info
 		if (Minecraft.getInstance().options.renderDebug) {
 			//Coordinates
-			pGuiGraphics.drawString(font, "[%d,%d]".formatted((int) view_x, (int) view_y), leftX + 5, topY + 5, 16777215);
+			pGuiGraphics.drawString(font, "[%d,%d]".formatted((int) view_x, (int) view_y), leftX + 5, topY + 5, -1);
 		}
 
 		pGuiGraphics.pose().popPose();
 		RenderSystem.disableBlend();
 		pGuiGraphics.disableScissor();
+	}
 
-
+	private void renderArrow(GuiGraphics pGuiGraphics, Vector2i start, Vector2i end) {
+		pGuiGraphics.pose().pushPose();
+		int a = end.x - start.x;
+		int b = end.y - start.y;
+		int distance = (int) Math.sqrt(Mth.square(a) + Mth.square(b));
+		float angle = (float) Math.toDegrees(Math.atan2(b, a));
+		pGuiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(angle), start.x, start.y, 0);
+		pGuiGraphics.blit(BORDER, start.x + 10, start.y - 2, 0, 230, 5, 5);
+		pGuiGraphics.blitRepeating(BORDER, start.x + 15, start.y - 2, distance - 43, 5, 5, 230, 5, 5);
+		pGuiGraphics.blit(BORDER, start.x + distance - 28, start.y - 6, 10, 226, 16, 13);
+		pGuiGraphics.pose().popPose();
 	}
 
 	public void renderScaledItem(ItemStack pStack, GuiGraphics gui, double pX, double pY, float scale) {

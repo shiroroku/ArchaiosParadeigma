@@ -23,17 +23,15 @@ public class MouseHandlerMixin {
 	 *
 	 * @see CastingOverlayInputHandler#onOverlayMouseScroll(double)
 	 */
-	@Inject(at = @At("HEAD"), method = "onScroll(JDD)V")
+	@Inject(at = @At("HEAD"), method = "onScroll(JDD)V", remap = false)
 	private void onScroll(long pWindowPointer, double pXOffset, double pYOffset, CallbackInfo ci) {
-		if (pWindowPointer == Minecraft.getInstance().getWindow().getWindow()) {
-			if (minecraft.getOverlay() instanceof CastingOverlayRenderer) {
-				double offset = pYOffset;
-				if (Minecraft.ON_OSX && pYOffset == 0) {
-					offset = pXOffset;
-				}
-				double d0 = (this.minecraft.options.discreteMouseScroll().get() ? Math.signum(offset) : offset) * this.minecraft.options.mouseWheelSensitivity().get();
-				CastingOverlayInputHandler.onOverlayMouseScroll(d0);
+		if (pWindowPointer == Minecraft.getInstance().getWindow().getWindow() && (minecraft.getOverlay() instanceof CastingOverlayRenderer)) {
+			double offset = pYOffset;
+			if (Minecraft.ON_OSX && pYOffset == 0) {
+				offset = pXOffset;
 			}
+			double d0 = (this.minecraft.options.discreteMouseScroll().get() ? Math.signum(offset) : offset) * this.minecraft.options.mouseWheelSensitivity().get();
+			CastingOverlayInputHandler.onOverlayMouseScroll(d0);
 		}
 	}
 }
