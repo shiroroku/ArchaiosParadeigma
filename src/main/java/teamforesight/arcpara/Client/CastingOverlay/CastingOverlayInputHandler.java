@@ -2,7 +2,9 @@ package teamforesight.arcpara.Client.CastingOverlay;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.util.Lazy;
@@ -118,6 +120,8 @@ public class CastingOverlayInputHandler {
 			if (inCastOverlay) {
 				//Research Tree
 				if (mc.options.keyInventory.isDown()) {
+					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1F, 0.70F));
+					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ENCHANTMENT_TABLE_USE, 0.5F, 0.70F));
 					Minecraft.getInstance().setScreen(new ResearchTreeScreen());
 					disableOverlay();
 					return;
