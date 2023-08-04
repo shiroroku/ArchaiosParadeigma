@@ -1,4 +1,4 @@
-package teamforesight.arcpara.Mixin;
+package teamforesight.arcpara.Mixin.Client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -23,7 +23,7 @@ public class MouseHandlerMixin {
 	 *
 	 * @see CastingOverlayInputHandler#onOverlayMouseScroll(double)
 	 */
-	@Inject(at = @At("HEAD"), method = "onScroll(JDD)V", remap = false)
+	@Inject(at = @At("HEAD"), method = "onScroll(JDD)V")
 	private void onScroll(long pWindowPointer, double pXOffset, double pYOffset, CallbackInfo ci) {
 		if (pWindowPointer == Minecraft.getInstance().getWindow().getWindow() && (minecraft.getOverlay() instanceof CastingOverlayRenderer)) {
 			double offset = pYOffset;
