@@ -1,13 +1,20 @@
 package teamforesight.arcpara;
 
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import teamforesight.arcpara.Data.ResearchTree.ResearchTreeLoader;
 import teamforesight.arcpara.Registry.CapabilityRegistry;
 
 @Mod.EventBusSubscriber(modid = ArcPara.MODID)
 public class Events {
+
+	@SubscribeEvent
+	public static void onAddReloadListenerEvent(AddReloadListenerEvent e) {
+		e.addListener(new ResearchTreeLoader());
+	}
 
 	@SubscribeEvent
 	public static void regenMana(TickEvent.PlayerTickEvent event) {

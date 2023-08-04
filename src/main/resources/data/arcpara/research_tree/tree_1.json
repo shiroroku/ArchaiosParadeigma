@@ -1,0 +1,27 @@
+[
+	{
+		"id": "arcpara:root",
+		"x": 0,
+		"y": 0,
+		"icon": "minecraft:iron_ingot",
+		"parents": []
+	},
+	{
+		"id": "arcpara:node_1",
+		"x": 30,
+		"y": 30,
+		"icon": "minecraft:golden_sword",
+		"parents": [
+			"arcpara:root"
+		]
+	},
+	{
+		"id": "arcpara:node_2",
+		"x": -60,
+		"y": 30,
+		"icon": "minecraft:apple",
+		"parents": [
+			"arcpara:node_1"
+		]
+	}
+]

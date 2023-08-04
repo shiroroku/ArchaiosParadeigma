@@ -1,4 +1,10 @@
 {
 	"key.arcpara.cast_mode": "Cast Mode",
-	"key.categories.arcpara.category": "Archaios Paradeigma"
+	"key.categories.arcpara.category": "Archaios Paradeigma",
+	"research.arcpara.tree_1.root": "\u00A7nRoot Node",
+	"research.arcpara.tree_1.root.desc": "\u00A77The starting research node.",
+	"research.arcpara.tree_1.node_1": "\u00A7dNode 1",
+	"research.arcpara.tree_1.node_1.desc": "\u00A77First Node.",
+	"research.arcpara.tree_1.node_2": "\u00A7lNode 2",
+	"research.arcpara.tree_1.node_2.desc": "\u00A7k\u00A77Second Node."
 }

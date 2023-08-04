@@ -62,7 +62,7 @@ public class CastingOverlayInputHandler {
 	public static void onMousePress(InputEvent.MouseButton.Pre event) {
 		if (inCastOverlay) {
 			ISpellCaster cap = CapabilityRegistry.getSpellCaster(Minecraft.getInstance().player).orElse(null);
-			ResourceLocation equippedSpell = ResourceLocation.tryParse(cap.getEquippedSpells()[overlay.get().selectedSpellIndex]);
+			ResourceLocation equippedSpell = ResourceLocation.tryParse(cap.getEquippedSpells()[overlay.get().SelectedSpellIndex]);
 			Spell spell = cap.getSpell(equippedSpell);
 			if (spell == null) {
 				return;
@@ -104,8 +104,8 @@ public class CastingOverlayInputHandler {
 	 */
 	public static void onOverlayMouseScroll(double delta) {
 		if (inCastOverlay) {
-			int scroll = (overlay.get().selectedSpellIndex - (int) delta) % 6;
-			overlay.get().selectedSpellIndex = scroll < 0 ? 5 : scroll;
+			int scroll = (overlay.get().SelectedSpellIndex - (int) delta) % 6;
+			overlay.get().SelectedSpellIndex = scroll < 0 ? 5 : scroll;
 		}
 	}
 
@@ -129,7 +129,7 @@ public class CastingOverlayInputHandler {
 				//Spellbar 1-6
 				for (int i = 0; i < 6; i++) {
 					if (mc.options.keyHotbarSlots[i].isDown()) {
-						overlay.get().selectedSpellIndex = i;
+						overlay.get().SelectedSpellIndex = i;
 					}
 				}
 			}

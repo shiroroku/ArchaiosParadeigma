@@ -2,7 +2,6 @@ package teamforesight.arcpara.Client.CastingOverlay.ResearchTree;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.math.Axis;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,13 +9,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import org.joml.Vector2f;
 import teamforesight.arcpara.ArcPara;
+import teamforesight.arcpara.Data.ResearchTree.ResearchTreeLoader;
 import teamforesight.arcpara.ModUtil;
 
+import java.util.List;
 import java.util.Random;
 
 public class ResearchTreeScreen extends Screen {
@@ -27,43 +24,91 @@ public class ResearchTreeScreen extends Screen {
 	// Texture dimensions
 	private static final int WIDTH = 256;
 	private static final int HEIGHT = 224;
+	private final SimpleTimer SoundTimer = new SimpleTimer(40, true);
+	private final SimpleTimer LineTimer = new SimpleTimer(60, true);
+	private final Random Rand = new Random();
+	private double ViewX = 0;
+	private double viewY = 0;
+	private final List<ResearchNodeRender> Nodes;
 
-	private double view_x = 0;
-	private double view_y = 0;
-
-	private SimpleAnimation soundAnimation = new SimpleAnimation(40, true);
-	private SimpleAnimation lineAnimation = new SimpleAnimation(60, true);
-
-
-	public ResearchTreeScreen() {
+	public ResearchTreeScreen () {
 		super(GameNarrator.NO_TITLE);
-		lineAnimation.start();
-		soundAnimation.start();
+		SoundTimer.start();
+		LineTimer.start();
+		ResourceLocation tree_id = new ResourceLocation(ArcPara.MODID, "tree_1");
+		Nodes = ResearchTreeLoader.TREES.get(tree_id).entrySet().stream().map(es -> new ResearchNodeRender(tree_id, es.getKey(), es.getValue(), LineTimer)).toList();
 	}
 
 	@Override
-	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
-		if (pButton == 1) {
+	public void render (GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		if (SoundTimer.getTicks() % 40 == 0 && Rand.nextBoolean()) {
+			Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.AMETHYST_BLOCK_CHIME, (float) (1.5 - Rand.nextDouble() * 0.5f), 1F));
+		}
+		SoundTimer.tick(pPartialTick);
+		LineTimer.tick(pPartialTick);
 
-			double mouseXConverted = pMouseX - (this.width - WIDTH) * 0.5f - WIDTH * 0.5f - view_x;
-			double mouseYConverted = pMouseY - (this.height - HEIGHT) * 0.5f - HEIGHT * 0.5f - view_y;
-			if (mouseXConverted > point1.x - 8 && mouseYConverted > point1.y - 8 && mouseXConverted < point1.x + 8 && mouseYConverted < point1.y + 8) {
-				point1.x += (float) pDragX;
-				point1.y += (float) pDragY;
-			}
-			return true;
+		int x_gui_left = (int) ((this.width - WIDTH) * 0.5f);
+		int y_gui_top = (int) ((this.height - HEIGHT) * 0.5f);
+		int x_gui_center = (int) (x_gui_left + WIDTH * 0.5f);
+		int y_gui_center = (int) (y_gui_top + HEIGHT * 0.5f);
+		final double mouse_x = pMouseX - x_gui_center - ViewX;
+		final double mouse_y = pMouseY - y_gui_center - viewY;
+
+		// Game tint
+		this.renderBackground(pGuiGraphics);
+
+		// Start Background
+		RenderSystem.enableBlend();
+		pGuiGraphics.enableScissor(x_gui_left + 5, y_gui_top + 5, x_gui_left + WIDTH - 5, y_gui_top + HEIGHT - 5);
+		pGuiGraphics.pose().pushPose();
+		float transparency = ModUtil.waveFunc(0.1f);
+		pGuiGraphics.blitRepeating(BACKGROUND_1, x_gui_left, y_gui_top, WIDTH, HEIGHT, (int) -ViewX, (int) -viewY, WIDTH, HEIGHT);
+		pGuiGraphics.setColor(1, 1, 1, transparency);
+		pGuiGraphics.blitRepeating(BACKGROUND_2, x_gui_left, y_gui_top, WIDTH, HEIGHT, (int) -ViewX, (int) -viewY, WIDTH, HEIGHT);
+		pGuiGraphics.setColor(1, 1, 1, 1);
+
+		// Nodes
+		pGuiGraphics.pose().pushPose();
+		pGuiGraphics.pose().translate(ViewX + x_gui_center, viewY + y_gui_center, 0);
+		Nodes.forEach(n -> n.render(pGuiGraphics));
+		Nodes.forEach(n -> n.renderItem(pGuiGraphics));
+		pGuiGraphics.pose().popPose();
+		// End Nodes
+
+		//Debug info
+		if (Minecraft.getInstance().options.renderDebug) {
+			//Coordinates
+			pGuiGraphics.drawString(font, "[%d,%d]".formatted((int) ViewX, (int) viewY), x_gui_left + 5, y_gui_top + 5, -1);
 		}
 
-		view_x += pDragX;
-		view_y += pDragY;
-		return true;
+		pGuiGraphics.pose().popPose();
+		pGuiGraphics.disableScissor();
+		// End Background
+
+		// Border
+		RenderSystem.enableBlend();
+		pGuiGraphics.blit(BORDER, x_gui_left, y_gui_top, 0, 0, WIDTH, HEIGHT);
+
+		// Tooltips
+		pGuiGraphics.pose().pushPose();
+		pGuiGraphics.pose().translate(ViewX + x_gui_center, viewY + y_gui_center, 0);
+		Nodes.forEach(n -> {
+			if (isMouseOver((int) n.Node.x - 8, (int) n.Node.y - 8, 16, 16, mouse_x, mouse_y)) {
+				n.renderTooltip(pGuiGraphics, mouse_x, mouse_y);
+			}
+		});
+		pGuiGraphics.pose().popPose();
+
+		RenderSystem.disableBlend();
+		super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
 	}
+
 
 	/**
 	 * Handles closing the menu when inventory key is pressed
 	 */
 	@Override
-	public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
+	public boolean keyPressed (int pKeyCode, int pScanCode, int pModifiers) {
 		if (super.keyPressed(pKeyCode, pScanCode, pModifiers)) {
 			return true;
 		} else if (this.minecraft.options.keyInventory.isActiveAndMatches(InputConstants.getKey(pKeyCode, pScanCode))) {
@@ -74,105 +119,27 @@ public class ResearchTreeScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		if(soundAnimation.getTicks() % 40 == 0) {
-			Random rand = new Random();
-			if(rand.nextBoolean()){
-				Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.AMETHYST_BLOCK_CHIME, (float) (1.5 - rand.nextDouble() * 0.5f), 1F));
-			}
-		}
-
-		soundAnimation.tick(pPartialTick);
-		lineAnimation.tick(pPartialTick);
-		int x = (this.width - WIDTH) / 2;
-		int y = (this.height - HEIGHT) / 2;
-		this.renderBackground(pGuiGraphics);
-		this.renderContent(pGuiGraphics, x, y);
-		this.renderBorder(pGuiGraphics, x, y);
-		super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-	}
-
-	public void renderBorder(GuiGraphics pGuiGraphics, int leftX, int topY) {
-		RenderSystem.enableBlend();
-		pGuiGraphics.blit(BORDER, leftX, topY, 0, 0, WIDTH, HEIGHT);
-		RenderSystem.disableBlend();
-	}
-
-	@Override
-	public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
+	public boolean mouseClicked (double pMouseX, double pMouseY, int pButton) {
 		return super.mouseClicked(pMouseX, pMouseY, pButton);
 	}
 
 	@Override
-	public boolean mouseReleased(double pMouseX, double pMouseY, int pButton) {
+	public boolean mouseReleased (double pMouseX, double pMouseY, int pButton) {
 		return super.mouseReleased(pMouseX, pMouseY, pButton);
 	}
 
-	Vector2f point1 = new Vector2f(-70, 60);
-	Vector2f point2 = new Vector2f(40, -20);
-	Vector2f point3 = new Vector2f(-60, -15);
-
-	public void renderContent(GuiGraphics pGuiGraphics, int leftX, int topY) {
-		int border_size = 5;
-		int half_x = (leftX + WIDTH / 2);
-		int half_y = (topY + HEIGHT / 2);
-
-		pGuiGraphics.enableScissor(leftX + border_size, topY + border_size, leftX + WIDTH - border_size, topY + HEIGHT - border_size);
-		RenderSystem.enableBlend();
-		pGuiGraphics.pose().pushPose();
-
-		//Star fade
-		float transparency = ModUtil.waveFunc(0.1f);
-		pGuiGraphics.blitRepeating(BACKGROUND_1, leftX, topY, WIDTH, HEIGHT, (int) -view_x, (int) -view_y, WIDTH, HEIGHT);
-		pGuiGraphics.setColor(1, 1, 1, transparency);
-		pGuiGraphics.blitRepeating(BACKGROUND_2, leftX, topY, WIDTH, HEIGHT, (int) -view_x, (int) -view_y, WIDTH, HEIGHT);
-		pGuiGraphics.setColor(1, 1, 1, 1);
-
-		pGuiGraphics.pose().pushPose();
-		pGuiGraphics.pose().translate(view_x + half_x, view_y + half_y, 0);
-
-
-		renderArrow(pGuiGraphics, point1, point2);
-		renderArrow(pGuiGraphics, point2, point3);
-		renderArrow(pGuiGraphics, point3, point1);
-		pGuiGraphics.blit(BORDER, (int) point1.x - 16, (int) point1.y - 16, 32, 224, 32, 32);
-
-
-		pGuiGraphics.renderItem(new ItemStack(Items.GOLDEN_SWORD), (int) point1.x - 8, (int) point1.y - 8);
-
-
-		pGuiGraphics.pose().popPose();
-
-		//Debug info
-		if (Minecraft.getInstance().options.renderDebug) {
-			//Coordinates
-			pGuiGraphics.drawString(font, "[%d,%d]".formatted((int) view_x, (int) view_y), leftX + 5, topY + 5, -1);
-		}
-
-		pGuiGraphics.pose().popPose();
-		RenderSystem.disableBlend();
-		pGuiGraphics.disableScissor();
+	/**
+	 * Handles screen panning.
+	 */
+	@Override
+	public boolean mouseDragged (double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
+		ViewX += pDragX;
+		viewY += pDragY;
+		return true;
 	}
 
-	private void renderArrow(GuiGraphics pGuiGraphics, Vector2f start, Vector2f end) {
-		pGuiGraphics.pose().pushPose();
-		int a = (int) (end.x - start.x);
-		int b = (int) (end.y - start.y);
-		int distance = (int) Math.sqrt(Mth.square(a) + Mth.square(b));
-		float angle = (float) Math.toDegrees(Math.atan2(b, a));
-		int arrow_texture_x = 0;
-		int arrow_texture_y = 226;
-		pGuiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(angle), start.x, start.y, 0);
-		pGuiGraphics.setColor(1, 1, 1, 0.3f);
-		pGuiGraphics.blit(BORDER, (int) (start.x + 10), (int) (start.y - 6), arrow_texture_x, arrow_texture_y, 5, 13);
-		pGuiGraphics.blitRepeating(BORDER, (int) (start.x + 15), (int) (start.y - 6), distance - 41, 13, arrow_texture_x + 5, arrow_texture_y, 5, 13);
-		pGuiGraphics.blit(BORDER, (int) (start.x + distance - 26), (int) (start.y - 6), arrow_texture_x + 10, arrow_texture_y, 16, 13);
-
-		pGuiGraphics.setColor(1, 1, 1, 1 - Mth.abs(lineAnimation.getPercentageProgress() * 2 - 1));
-		float d_a = ((distance - 25) * lineAnimation.getPercentageProgress()) + 10;
-		pGuiGraphics.blit(BORDER, (int) (start.x + d_a), (int) (start.y - 6), arrow_texture_x, arrow_texture_y, 5, 13);
-		pGuiGraphics.setColor(1, 1, 1, 1);
-		pGuiGraphics.pose().popPose();
+	private boolean isMouseOver (int pX, int pY, int pWidth, int pHeight, double pMouseX, double pMouseY) {
+		return pMouseX >= (pX - 1) && pMouseX < (pX + pWidth + 1) && pMouseY >= (pY - 1) && pMouseY < (pY + pHeight + 1);
 	}
 
 }
