@@ -52,7 +52,11 @@ public class ResearchNodeRender {
 	}
 
 	public void drawConnections (GuiGraphics pGuiGraphics) {
-		Parents.forEach(p -> renderLine(pGuiGraphics, new Vector2f(p.x, p.y), new Vector2f(Node.x, Node.y)));
+		Parents.forEach(p -> {
+			if (p != null) {
+				renderLine(pGuiGraphics, new Vector2f(p.x, p.y), new Vector2f(Node.x, Node.y));
+			}
+		});
 	}
 
 	private void renderLine (GuiGraphics pGuiGraphics, Vector2f pStart, Vector2f pEnd) {
