@@ -12,19 +12,19 @@ import teamforesight.arcpara.Registry.CapabilityRegistry;
 import teamforesight.arcpara.Registry.SpellRegistry;
 
 public class SetSpellCommand {
-	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-		dispatcher.register(Commands.literal("arcpara").requires(cs -> cs.hasPermission(4)).then(Commands.argument("player", EntityArgument.player()).then(Commands.literal("set_equipped_spell").then(Commands.argument("slot", IntegerArgumentType.integer(0, 5)).then(Commands.argument("spell", StringArgumentType.string()).executes(cs -> {
+	public static void register (CommandDispatcher<CommandSourceStack> pDispatcher) {
+		pDispatcher.register(Commands.literal("arcpara").requires(cs -> cs.hasPermission(4)).then(Commands.argument("player", EntityArgument.player()).then(Commands.literal("set_equipped_spell").then(Commands.argument("slot", IntegerArgumentType.integer(0, 5)).then(Commands.argument("spell", StringArgumentType.string()).executes(cs -> {
 			CapabilityRegistry.getSpellCaster(EntityArgument.getPlayer(cs, "player")).ifPresent(cap -> {
 				String spell = StringArgumentType.getString(cs, "spell");
 				if (spell.isEmpty()) {
 					spell = null;
 				}
-				String finalSpell = spell;
-				if (cap.getSpells().stream().noneMatch(s -> s.id.toString().equals(finalSpell))) {
-					ArcPara.LOGGER.error("Cannot set equipped spell, player does not have the spell: [{}]!", finalSpell);
+				String final_spell = spell;
+				if (cap.getSpells().stream().noneMatch(s -> s.ID.toString().equals(final_spell))) {
+					ArcPara.LOGGER.error("Cannot set equipped spell, player does not have the spell: [{}]!", final_spell);
 					return;
 				}
-				cap.setEquippedSpell(IntegerArgumentType.getInteger(cs, "slot"), finalSpell);
+				cap.setEquippedSpell(IntegerArgumentType.getInteger(cs, "slot"), final_spell);
 			});
 			CapabilityRegistry.sendCapabilityPacket(EntityArgument.getPlayer(cs, "player"));
 			return 0;

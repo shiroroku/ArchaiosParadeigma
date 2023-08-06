@@ -29,22 +29,22 @@ public class ResearchNodeRender {
 	public ResearchNodeRender (ResourceLocation pTreeID, ResourceLocation pID, ResearchNode pNode, SimpleTimer pAnimationTimer) {
 		this.Node = pNode;
 		this.animationTimer = pAnimationTimer;
-		this.Icon = new ItemStack(ForgeRegistries.ITEMS.getValue(pNode.icon));
-		Parents = pNode.parents.stream().map(p -> ResearchTreeLoader.TREES.get(pTreeID).get(p)).toList();
+		this.Icon = new ItemStack(ForgeRegistries.ITEMS.getValue(pNode.Icon));
+		Parents = pNode.Parents.stream().map(p -> ResearchTreeLoader.TREES.get(pTreeID).get(p)).toList();
 		String key = "research.%s.%s.%s".formatted(pID.getNamespace(), pTreeID.getPath(), pID.getPath());
 		ToolTip = Arrays.asList(Component.translatable(key), Component.translatable(key + ".desc"));
 	}
 
 	public void render (GuiGraphics pGuiGraphics) {
 		drawConnections(pGuiGraphics);
-		pGuiGraphics.blit(WIDGETS, (int) Node.x - 16, (int) Node.y - 16, 32, 0, 32, 32);
+		pGuiGraphics.blit(WIDGETS, (int) Node.X - 16, (int) Node.Y - 16, 32, 0, 32, 32);
 	}
 
 	/**
 	 * Separate than render because rendering items in-between connections and blits will cause weird transparency bugs.
 	 */
 	public void renderItem (GuiGraphics pGuiGraphics) {
-		pGuiGraphics.renderItem(Icon, (int) Node.x - 8, (int) Node.y - 8);
+		pGuiGraphics.renderItem(Icon, (int) Node.X - 8, (int) Node.Y - 8);
 	}
 
 	public void renderTooltip (GuiGraphics pGuiGraphics, double pMouseX, double pMouseY) {
@@ -54,7 +54,7 @@ public class ResearchNodeRender {
 	public void drawConnections (GuiGraphics pGuiGraphics) {
 		Parents.forEach(p -> {
 			if (p != null) {
-				renderLine(pGuiGraphics, new Vector2f(p.x, p.y), new Vector2f(Node.x, Node.y));
+				renderLine(pGuiGraphics, new Vector2f(p.X, p.Y), new Vector2f(Node.X, Node.Y));
 			}
 		});
 	}

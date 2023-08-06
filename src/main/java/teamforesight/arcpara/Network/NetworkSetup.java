@@ -16,7 +16,7 @@ public class NetworkSetup {
 	public static SimpleChannel CHANNEL;
 
 	@SubscribeEvent
-	public static void setup(final FMLCommonSetupEvent event) {
+	public static void setup (final FMLCommonSetupEvent pEvent) {
 		CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(ArcPara.MODID, "channel"), () -> "1.0", s -> true, s -> true);
 		int id = 0;
 		CHANNEL.registerMessage(id++, SyncCapabilityPacket.class, SyncCapabilityPacket::encode, SyncCapabilityPacket::decode, SyncCapabilityPacket.Handler::onMessageReceived, Optional.of(NetworkDirection.PLAY_TO_CLIENT));

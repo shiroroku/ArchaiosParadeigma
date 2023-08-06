@@ -9,31 +9,31 @@ import java.util.List;
 
 public interface ISpellCaster extends INBTSerializable<CompoundTag> {
 
-	float getMaxMana();
+	float getMaxMana ();
 
-	void setMaxMana(float amount);
+	void setMaxMana (float amount);
 
-	float getMana();
+	float getMana ();
 
-	void setMana(float amount);
+	void setMana (float amount);
 
-	boolean canSpendMana(float amount);
+	boolean canSpendMana (float amount);
 
-	void spendMana(float amount);
+	void spendMana (float amount);
 
-	void addMana(float amount);
+	void addMana (float amount);
 
-	Spell getSpell(ResourceLocation id);
+	Spell getSpell (ResourceLocation id);
 
-	void setSpells(List<Spell> spells);
+	void setSpells (List<Spell> spells);
 
-	List<Spell> getSpells();
+	List<Spell> getSpells ();
 
-	String[] getEquippedSpells();
+	String[] getEquippedSpells ();
 
-	void setEquippedSpells(String[] spells);
+	void setEquippedSpells (String[] spells);
 
-	void setEquippedSpell(int slot, String spell_id);
+	void setEquippedSpell (int slot, String spell_id);
 
-	String getEquippedSpell(int slot);
+	String getEquippedSpell (int slot);
 }

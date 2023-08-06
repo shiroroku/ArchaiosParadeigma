@@ -14,45 +14,45 @@ import java.util.function.Supplier;
 
 public class SpellCastPacket {
 
-	ResourceLocation spell;
-	boolean phase;
-	boolean primary;
+	ResourceLocation Spell;
+	boolean Phase;
+	boolean Primary;
 
 	/**
-	 * @param spell   Spell id
-	 * @param phase   True = start cast, false = stop cast
-	 * @param primary Primary cast or secondary
+	 * @param pSpell Spell id
+	 * @param pPhase True = start cast, false = stop cast
+	 * @param pPrimary Primary cast or secondary
 	 */
-	public SpellCastPacket(ResourceLocation spell, boolean phase, boolean primary) {
-		this.spell = spell;
-		this.phase = phase;
-		this.primary = primary;
+	public SpellCastPacket (ResourceLocation pSpell, boolean pPhase, boolean pPrimary) {
+		this.Spell = pSpell;
+		this.Phase = pPhase;
+		this.Primary = pPrimary;
 	}
 
-	public static SpellCastPacket decode(FriendlyByteBuf buf) {
-		return new SpellCastPacket(buf.readResourceLocation(), buf.readBoolean(), buf.readBoolean());
+	public static SpellCastPacket decode (FriendlyByteBuf pBuf) {
+		return new SpellCastPacket(pBuf.readResourceLocation(), pBuf.readBoolean(), pBuf.readBoolean());
 	}
 
-	public void encode(FriendlyByteBuf buf) {
-		buf.writeResourceLocation(spell);
-		buf.writeBoolean(phase);
-		buf.writeBoolean(primary);
+	public void encode (FriendlyByteBuf pBuf) {
+		pBuf.writeResourceLocation(Spell);
+		pBuf.writeBoolean(Phase);
+		pBuf.writeBoolean(Primary);
 	}
 
 	public static class Handler {
-		public static void onMessageReceived(final SpellCastPacket message, Supplier<NetworkEvent.Context> ctxSupplier) {
-			NetworkEvent.Context ctx = ctxSupplier.get();
+		public static void onMessageReceived (final SpellCastPacket pMessage, Supplier<NetworkEvent.Context> pCTX) {
+			NetworkEvent.Context ctx = pCTX.get();
 			ctx.enqueueWork(() -> {
-				LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
+				LogicalSide side_received = ctx.getDirection().getReceptionSide();
 				ctx.setPacketHandled(true);
-				if (sideReceived != LogicalSide.SERVER) {
+				if (side_received != LogicalSide.SERVER) {
 					return;
 				}
-				final ServerPlayer sendingPlayer = ctx.getSender();
-				if (sendingPlayer == null) {
+				final ServerPlayer sending_player = ctx.getSender();
+				if (sending_player == null) {
 					return;
 				}
-				processMessage(sendingPlayer, message);
+				processMessage(sending_player, pMessage);
 			});
 			ctx.setPacketHandled(true);
 		}
@@ -60,35 +60,33 @@ public class SpellCastPacket {
 		/**
 		 * Recieved when the player clicks in casting overlay. Does some checks then casts the spell on server.
 		 */
-		private static void processMessage(ServerPlayer player, SpellCastPacket message) {
-			CapabilityRegistry.getSpellCaster(player).ifPresent(p -> {
+		private static void processMessage (ServerPlayer pPlayer, SpellCastPacket pMessage) {
+			CapabilityRegistry.getSpellCaster(pPlayer).ifPresent(p -> {
 				// Make sure the spell the player is trying to cast exists
-				Spell casting_spell = p.getSpell(message.spell);
+				Spell casting_spell = p.getSpell(pMessage.Spell);
 				if (casting_spell == null) {
 					ArcPara.LOGGER.error("Recieved invalid spell cast packet from client!");
 					return;
 				}
-
 				// Check if the player has the spell equipped
-				if (Arrays.stream(p.getEquippedSpells()).anyMatch(s -> s.equals(message.spell.toString()))) {
-					if (casting_spell.cantCast(player, message.primary)) {
+				if (Arrays.stream(p.getEquippedSpells()).anyMatch(s -> s.equals(pMessage.Spell.toString()))) {
+					if (casting_spell.cantCast(pPlayer, pMessage.Primary)) {
 						return;
 					}
-					if (message.phase) { // When starting
-						casting_spell.start(player, message.primary);
+					if (pMessage.Phase) { // When starting
+						casting_spell.start(pPlayer, pMessage.Primary);
 					} else { // When stopping
-						if(message.primary && !casting_spell.hasStoppedPrimary) { // If we didnt stop early on primary, stop
-							casting_spell.stop(player, message.primary);
+						if (pMessage.Primary && !casting_spell.HasStoppedPrimary) { // If we didnt stop early on primary, stop
+							casting_spell.stop(pPlayer, pMessage.Primary);
 						}
-						if(!message.primary && !casting_spell.hasStoppedSecondary) { // If we didnt stop early on secondary, stop
-							casting_spell.stop(player, message.primary);
+						if (!pMessage.Primary && !casting_spell.HasStoppedSecondary) { // If we didnt stop early on secondary, stop
+							casting_spell.stop(pPlayer, pMessage.Primary);
 						}
 					}
 				} else {
 					ArcPara.LOGGER.error("Player tried to cast spell they dont have!");
 				}
 			});
-
 		}
 	}
 }

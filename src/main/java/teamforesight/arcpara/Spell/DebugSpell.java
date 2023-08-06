@@ -5,21 +5,21 @@ import net.minecraft.world.entity.player.Player;
 import teamforesight.arcpara.ArcPara;
 
 public class DebugSpell extends Spell {
-	public DebugSpell() {
+	public DebugSpell () {
 		super(new ResourceLocation(ArcPara.MODID, "debug"), 5f);
 	}
 
 	@Override
-	public void castStart(Player player, boolean isPrimary) {
+	public void castStart (Player pPlayer, boolean pIsPrimary) {
 	}
 
 	@Override
-	public void castHold(Player player, boolean isPrimary) {
-		ArcPara.LOGGER.debug("[{}] Debug spell [{}] is holding for {} ticks", player.getStringUUID(), isPrimary ? "Primary" : "Secondary", getChargeDuration(isPrimary));
+	public void castHold (Player pPlayer, boolean pIsPrimary) {
+		ArcPara.LOGGER.debug("[{}] Debug spell [{}] is holding for {} ticks", pPlayer.getStringUUID(), pIsPrimary ? "Primary" : "Secondary", getChargeDuration(pIsPrimary));
 	}
 
 	@Override
-	public void castEnd(Player player, boolean isPrimary, int chargeDuration) {
-		ArcPara.LOGGER.debug("[{}] Debug spell [{}] finished casting for {} ticks", player.getStringUUID(), isPrimary ? "Primary" : "Secondary", getChargeDuration(isPrimary));
+	public void castEnd (Player pPlayer, boolean pIsPrimary, int pChargeDuration) {
+		ArcPara.LOGGER.debug("[{}] Debug spell [{}] finished casting for {} ticks", pPlayer.getStringUUID(), pIsPrimary ? "Primary" : "Secondary", getChargeDuration(pIsPrimary));
 	}
 }

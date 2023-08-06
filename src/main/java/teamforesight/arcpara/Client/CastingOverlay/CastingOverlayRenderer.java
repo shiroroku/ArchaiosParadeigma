@@ -66,7 +66,7 @@ public class CastingOverlayRenderer extends Overlay {
 		Spell spell = pSpellCaster.getSpell(ResourceLocation.tryParse(pSpellCaster.getEquippedSpells()[SelectedSpellIndex]));
 		float transparency = ModUtil.waveFunc(0.3f) * 0.25f + 0.5f;
 		RenderSystem.setShaderColor(0.25f, 0.6f, 1, transparency);
-		if (spell != null && spell.manaCostPrimary > pSpellCaster.getMana()) {
+		if (spell != null && spell.ManaCostPrimary > pSpellCaster.getMana()) {
 			RenderSystem.setShaderColor(1, 0f, 0f, transparency);
 		}
 		float missing_mana_percentage = 1f - pSpellCaster.getMana() / pSpellCaster.getMaxMana();

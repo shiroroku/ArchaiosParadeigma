@@ -21,7 +21,7 @@ public class SpellRegistry {
 		put(new ResourceLocation(ArcPara.MODID, "spark"), SparkSpell::new);
 	}};
 
-	public static Spell createSpell(ResourceLocation id) {
+	public static Spell createSpell (ResourceLocation id) {
 		return SPELLS.get(id).get();
 	}
 
@@ -29,29 +29,29 @@ public class SpellRegistry {
 	 * Handles spell charging serverside
 	 */
 	@SubscribeEvent
-	public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.START && event.side == LogicalSide.SERVER) {
-			CapabilityRegistry.getSpellCaster(event.player).ifPresent(cap -> cap.getSpells().forEach(s -> {
+	public static void onPlayerTick (TickEvent.PlayerTickEvent pEvent) {
+		if (pEvent.phase == TickEvent.Phase.START && pEvent.side == LogicalSide.SERVER) {
+			CapabilityRegistry.getSpellCaster(pEvent.player).ifPresent(cap -> cap.getSpells().forEach(s -> {
 				// Primary charge
-				if (s.isHoldingPrimary) { // Increase duration while holding is true, call spell function
-					s.chargeDurationPrimary++;
-					s.castHold(event.player, true);
-				} else if (s.chargeDurationPrimary != 0) { // If spell is not charging and our duration hasnt been reset, reset it
-					s.chargeDurationPrimary = 0;
+				if (s.IsHoldingPrimary) { // Increase duration while holding is true, call spell function
+					s.ChargeDurationPrimary++;
+					s.castHold(pEvent.player, true);
+				} else if (s.ChargeDurationPrimary != 0) { // If spell is not charging and our duration hasnt been reset, reset it
+					s.ChargeDurationPrimary = 0;
 				}
-				if (s.chargeDurationPrimary >= s.maxChargePrimary) { // If we reached the max charge duration, stop charging
-					s.stop(event.player, true);
+				if (s.ChargeDurationPrimary >= s.MaxChargePrimary) { // If we reached the max charge duration, stop charging
+					s.stop(pEvent.player, true);
 				}
 
 				// Secondary charge
-				if (s.isHoldingSecondary) {
-					s.chargeDurationSecondary++;
-					s.castHold(event.player, false);
-				} else if (s.chargeDurationSecondary != 0) {
-					s.chargeDurationSecondary = 0;
+				if (s.IsHoldingSecondary) {
+					s.ChargeDurationSecondary++;
+					s.castHold(pEvent.player, false);
+				} else if (s.ChargeDurationSecondary != 0) {
+					s.ChargeDurationSecondary = 0;
 				}
-				if (s.chargeDurationSecondary >= s.maxChargeSecondary) {
-					s.stop(event.player, false);
+				if (s.ChargeDurationSecondary >= s.MaxChargeSecondary) {
+					s.stop(pEvent.player, false);
 				}
 			}));
 		}

@@ -24,7 +24,7 @@ public class MouseHandlerMixin {
 	 * @see CastingOverlayInputHandler#onOverlayMouseScroll(double)
 	 */
 	@Inject(at = @At("HEAD"), method = "onScroll(JDD)V")
-	private void onScroll(long pWindowPointer, double pXOffset, double pYOffset, CallbackInfo ci) {
+	private void onScroll (long pWindowPointer, double pXOffset, double pYOffset, CallbackInfo pCallback) {
 		if (pWindowPointer == Minecraft.getInstance().getWindow().getWindow() && (minecraft.getOverlay() instanceof CastingOverlayRenderer)) {
 			double offset = pYOffset;
 			if (Minecraft.ON_OSX && pYOffset == 0) {

@@ -6,15 +6,15 @@ import java.util.List;
 
 public class ResearchNode {
 
-	public float x;
-	public float y;
-	public ResourceLocation icon;
-	public List<ResourceLocation> parents;
+	public float X;
+	public float Y;
+	public ResourceLocation Icon;
+	public List<ResourceLocation> Parents;
 
-	public ResearchNode(float x, float y, ResourceLocation icon, List<ResourceLocation> parents) {
-		this.x = x;
-		this.y = y;
-		this.icon = icon;
-		this.parents = parents;
+	public ResearchNode (float pX, float pY, ResourceLocation pIconItem, List<ResourceLocation> pParents) {
+		this.X = pX;
+		this.Y = pY;
+		this.Icon = pIconItem;
+		this.Parents = pParents;
 	}
 }

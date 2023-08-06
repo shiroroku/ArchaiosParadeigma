@@ -12,21 +12,19 @@ import teamforesight.arcpara.Registry.CapabilityRegistry;
 public class Events {
 
 	@SubscribeEvent
-	public static void onAddReloadListenerEvent(AddReloadListenerEvent e) {
-		e.addListener(new ResearchTreeLoader());
+	public static void onAddReloadListenerEvent (AddReloadListenerEvent pEvent) {
+		pEvent.addListener(new ResearchTreeLoader());
 	}
 
 	@SubscribeEvent
-	public static void regenMana(TickEvent.PlayerTickEvent event) {
-		if (event.side == LogicalSide.SERVER && event.phase == TickEvent.Phase.END) {
-			if (event.player.tickCount % 20 == 0) {
-				CapabilityRegistry.getSpellCaster(event.player).ifPresent(cap -> {
-					if (cap.getMana() < cap.getMaxMana()) {
-						cap.addMana(1f);
-						CapabilityRegistry.sendCapabilityPacket(event.player);
-					}
-				});
-			}
+	public static void regenMana (TickEvent.PlayerTickEvent pEvent) {
+		if (pEvent.side == LogicalSide.SERVER && pEvent.phase == TickEvent.Phase.END && (pEvent.player.tickCount % 20 == 0)) {
+			CapabilityRegistry.getSpellCaster(pEvent.player).ifPresent(cap -> {
+				if (cap.getMana() < cap.getMaxMana()) {
+					cap.addMana(1f);
+					CapabilityRegistry.sendCapabilityPacket(pEvent.player);
+				}
+			});
 		}
 	}
 }

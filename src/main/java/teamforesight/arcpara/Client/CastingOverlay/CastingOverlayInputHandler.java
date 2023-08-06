@@ -24,34 +24,33 @@ import teamforesight.arcpara.Spell.Spell;
 @Mod.EventBusSubscriber(modid = ArcPara.MODID, value = Dist.CLIENT)
 public class CastingOverlayInputHandler {
 
-	private static boolean inCastOverlay = false;
-	private static final Lazy<CastingOverlayRenderer> overlay = Lazy.of(() ->
-			new CastingOverlayRenderer(Minecraft.getInstance()));
+	private static boolean InCastOverlay = false;
+	private static final Lazy<CastingOverlayRenderer> Overlay = Lazy.of(() -> new CastingOverlayRenderer(Minecraft.getInstance()));
 
 	/**
 	 * Enables and disables overlay when the keybind is held.
 	 */
 	@SubscribeEvent
-	public static void onClientTickStart(TickEvent.ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.START) {
+	public static void onClientTickStart (TickEvent.ClientTickEvent pEvent) {
+		if (pEvent.phase == TickEvent.Phase.START) {
 			if (KeyMappingRegistry.CAST_MODE.get().isDown()) {
-				if (!inCastOverlay) {
+				if (!InCastOverlay) {
 					enableOverlay();
 				}
-			} else if (inCastOverlay && Minecraft.getInstance().getOverlay() instanceof CastingOverlayRenderer) {
+			} else if (InCastOverlay && Minecraft.getInstance().getOverlay() instanceof CastingOverlayRenderer) {
 				disableOverlay();
 			}
 
 		}
 	}
 
-	private static void enableOverlay() {
-		inCastOverlay = true;
-		Minecraft.getInstance().setOverlay(overlay.get());
+	private static void enableOverlay () {
+		InCastOverlay = true;
+		Minecraft.getInstance().setOverlay(Overlay.get());
 	}
 
-	private static void disableOverlay() {
-		inCastOverlay = false;
+	private static void disableOverlay () {
+		InCastOverlay = false;
 		Minecraft.getInstance().setOverlay(null);
 	}
 
@@ -59,41 +58,41 @@ public class CastingOverlayInputHandler {
 	 * Calls start and end on spell cast when mouse buttons are pressed.
 	 */
 	@SubscribeEvent
-	public static void onMousePress(InputEvent.MouseButton.Pre event) {
-		if (inCastOverlay) {
+	public static void onMousePress (InputEvent.MouseButton.Pre pEvent) {
+		if (InCastOverlay) {
 			ISpellCaster cap = CapabilityRegistry.getSpellCaster(Minecraft.getInstance().player).orElse(null);
-			ResourceLocation equippedSpell = ResourceLocation.tryParse(cap.getEquippedSpells()[overlay.get().SelectedSpellIndex]);
-			Spell spell = cap.getSpell(equippedSpell);
+			ResourceLocation equipped_spell = ResourceLocation.tryParse(cap.getEquippedSpells()[Overlay.get().SelectedSpellIndex]);
+			Spell spell = cap.getSpell(equipped_spell);
 			if (spell == null) {
 				return;
 			}
-			if (event.getAction() == InputConstants.PRESS) {
+			if (pEvent.getAction() == InputConstants.PRESS) {
 				// MOUSE PRESS
-				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-					ArcPara.LOGGER.debug("[Client][{}] Start Cast primary", equippedSpell);
+				if (pEvent.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+					ArcPara.LOGGER.debug("[Client][{}] Start Cast primary", equipped_spell);
 					// A light check to see if we can cast this spell to save a packet
 					// The server ultimately decides in SpellCastPacket
 					if (spell.cantCast(Minecraft.getInstance().player, true)) {
 						return;
 					}
-					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, true, true));
+					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equipped_spell, true, true));
 				}
-				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-					ArcPara.LOGGER.debug("[Client][{}] Start Cast secondary", equippedSpell);
+				if (pEvent.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+					ArcPara.LOGGER.debug("[Client][{}] Start Cast secondary", equipped_spell);
 					if (spell.cantCast(Minecraft.getInstance().player, false)) {
 						return;
 					}
-					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, true, false));
+					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equipped_spell, true, false));
 				}
 			} else {
 				// MOUSE RELEASE
-				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-					ArcPara.LOGGER.debug("[Client][{}] End Cast primary", equippedSpell);
-					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, false, true));
+				if (pEvent.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+					ArcPara.LOGGER.debug("[Client][{}] End Cast primary", equipped_spell);
+					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equipped_spell, false, true));
 				}
-				if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-					ArcPara.LOGGER.debug("[Client][{}] End Cast secondary", equippedSpell);
-					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equippedSpell, false, false));
+				if (pEvent.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+					ArcPara.LOGGER.debug("[Client][{}] End Cast secondary", equipped_spell);
+					NetworkSetup.CHANNEL.sendToServer(new SpellCastPacket(equipped_spell, false, false));
 				}
 			}
 		}
@@ -102,10 +101,10 @@ public class CastingOverlayInputHandler {
 	/**
 	 * Changes selected spell on scroll.
 	 */
-	public static void onOverlayMouseScroll(double delta) {
-		if (inCastOverlay) {
-			int scroll = (overlay.get().SelectedSpellIndex - (int) delta) % 6;
-			overlay.get().SelectedSpellIndex = scroll < 0 ? 5 : scroll;
+	public static void onOverlayMouseScroll (double pDelta) {
+		if (InCastOverlay) {
+			int scroll = (Overlay.get().SelectedSpellIndex - (int) pDelta) % 6;
+			Overlay.get().SelectedSpellIndex = scroll < 0 ? 5 : scroll;
 		}
 	}
 
@@ -113,13 +112,13 @@ public class CastingOverlayInputHandler {
 	 * Changes selected spell on keys 1-6. Also opens research tree on inventory.
 	 */
 	@SubscribeEvent
-	public static void onClientTickEnd(TickEvent.ClientTickEvent event) {
-		if (event.phase == TickEvent.Phase.START) {
-			Minecraft mc = Minecraft.getInstance();
+	public static void onClientTickEnd (TickEvent.ClientTickEvent pEvent) {
+		if (pEvent.phase == TickEvent.Phase.START) {
+			Minecraft minecraft = Minecraft.getInstance();
 			// We use isdown instead of consumeclick because for some reason consumeclick overrides vanilla binds.
-			if (inCastOverlay) {
+			if (InCastOverlay) {
 				//Research Tree
-				if (mc.options.keyInventory.isDown()) {
+				if (minecraft.options.keyInventory.isDown()) {
 					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1F, 0.70F));
 					Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.ENCHANTMENT_TABLE_USE, 0.5F, 0.70F));
 					Minecraft.getInstance().setScreen(new ResearchTreeScreen());
@@ -128,8 +127,8 @@ public class CastingOverlayInputHandler {
 				}
 				//Spellbar 1-6
 				for (int i = 0; i < 6; i++) {
-					if (mc.options.keyHotbarSlots[i].isDown()) {
-						overlay.get().SelectedSpellIndex = i;
+					if (minecraft.options.keyHotbarSlots[i].isDown()) {
+						Overlay.get().SelectedSpellIndex = i;
 					}
 				}
 			}

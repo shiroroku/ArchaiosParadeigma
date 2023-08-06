@@ -10,8 +10,8 @@ import teamforesight.arcpara.Command.SetSpellCommand;
 @Mod.EventBusSubscriber(modid = ArcPara.MODID)
 public class CommandRegistry {
 	@SubscribeEvent
-	public static void onRegisterCommand(RegisterCommandsEvent event) {
-		SetSpellCommand.register(event.getDispatcher());
-		ManaCommand.register(event.getDispatcher());
+	public static void onRegisterCommand (RegisterCommandsEvent pEvent) {
+		SetSpellCommand.register(pEvent.getDispatcher());
+		ManaCommand.register(pEvent.getDispatcher());
 	}
 }

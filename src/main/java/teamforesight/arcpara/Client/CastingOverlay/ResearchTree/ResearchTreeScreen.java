@@ -28,7 +28,7 @@ public class ResearchTreeScreen extends Screen {
 	private final SimpleTimer LineTimer = new SimpleTimer(60, true);
 	private final Random Rand = new Random();
 	private double ViewX = 0;
-	private double viewY = 0;
+	private double ViewY = 0;
 	private final List<ResearchNodeRender> Nodes;
 
 	public ResearchTreeScreen () {
@@ -52,7 +52,7 @@ public class ResearchTreeScreen extends Screen {
 		int x_gui_center = (int) (x_gui_left + WIDTH * 0.5f);
 		int y_gui_center = (int) (y_gui_top + HEIGHT * 0.5f);
 		final double mouse_x = pMouseX - x_gui_center - ViewX;
-		final double mouse_y = pMouseY - y_gui_center - viewY;
+		final double mouse_y = pMouseY - y_gui_center - ViewY;
 
 		// Game tint
 		this.renderBackground(pGuiGraphics);
@@ -62,14 +62,14 @@ public class ResearchTreeScreen extends Screen {
 		pGuiGraphics.enableScissor(x_gui_left + 5, y_gui_top + 5, x_gui_left + WIDTH - 5, y_gui_top + HEIGHT - 5);
 		pGuiGraphics.pose().pushPose();
 		float transparency = ModUtil.waveFunc(0.1f);
-		pGuiGraphics.blitRepeating(BACKGROUND_1, x_gui_left, y_gui_top, WIDTH, HEIGHT, (int) -ViewX, (int) -viewY, WIDTH, HEIGHT);
+		pGuiGraphics.blitRepeating(BACKGROUND_1, x_gui_left, y_gui_top, WIDTH, HEIGHT, (int) -ViewX, (int) -ViewY, WIDTH, HEIGHT);
 		pGuiGraphics.setColor(1, 1, 1, transparency);
-		pGuiGraphics.blitRepeating(BACKGROUND_2, x_gui_left, y_gui_top, WIDTH, HEIGHT, (int) -ViewX, (int) -viewY, WIDTH, HEIGHT);
+		pGuiGraphics.blitRepeating(BACKGROUND_2, x_gui_left, y_gui_top, WIDTH, HEIGHT, (int) -ViewX, (int) -ViewY, WIDTH, HEIGHT);
 		pGuiGraphics.setColor(1, 1, 1, 1);
 
 		// Nodes
 		pGuiGraphics.pose().pushPose();
-		pGuiGraphics.pose().translate(ViewX + x_gui_center, viewY + y_gui_center, 0);
+		pGuiGraphics.pose().translate(ViewX + x_gui_center, ViewY + y_gui_center, 0);
 		Nodes.forEach(n -> n.render(pGuiGraphics));
 		Nodes.forEach(n -> n.renderItem(pGuiGraphics));
 		pGuiGraphics.pose().popPose();
@@ -78,7 +78,7 @@ public class ResearchTreeScreen extends Screen {
 		//Debug info
 		if (Minecraft.getInstance().options.renderDebug) {
 			//Coordinates
-			pGuiGraphics.drawString(font, "[%d,%d]".formatted((int) ViewX, (int) viewY), x_gui_left + 5, y_gui_top + 5, -1);
+			pGuiGraphics.drawString(font, "[%d,%d]".formatted((int) ViewX, (int) ViewY), x_gui_left + 5, y_gui_top + 5, -1);
 		}
 
 		pGuiGraphics.pose().popPose();
@@ -91,9 +91,9 @@ public class ResearchTreeScreen extends Screen {
 
 		// Tooltips
 		pGuiGraphics.pose().pushPose();
-		pGuiGraphics.pose().translate(ViewX + x_gui_center, viewY + y_gui_center, 0);
+		pGuiGraphics.pose().translate(ViewX + x_gui_center, ViewY + y_gui_center, 0);
 		Nodes.forEach(n -> {
-			if (isMouseOver((int) n.Node.x - 8, (int) n.Node.y - 8, 16, 16, mouse_x, mouse_y)) {
+			if (isMouseOver((int) n.Node.X - 8, (int) n.Node.Y - 8, 16, 16, mouse_x, mouse_y)) {
 				n.renderTooltip(pGuiGraphics, mouse_x, mouse_y);
 			}
 		});
@@ -134,7 +134,7 @@ public class ResearchTreeScreen extends Screen {
 	@Override
 	public boolean mouseDragged (double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
 		ViewX += pDragX;
-		viewY += pDragY;
+		ViewY += pDragY;
 		return true;
 	}
 

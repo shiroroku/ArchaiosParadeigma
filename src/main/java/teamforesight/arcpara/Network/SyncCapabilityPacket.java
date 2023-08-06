@@ -16,47 +16,47 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class SyncCapabilityPacket {
-	public ISpellCaster spell_caster;
-	UUID player;
+	public ISpellCaster SpellCaster;
+	public UUID Player;
 
-	public SyncCapabilityPacket(ISpellCaster spell_caster, UUID player) {
-		this.spell_caster = spell_caster;
-		this.player = player;
+	public SyncCapabilityPacket (ISpellCaster pSpellCaster, UUID pPlayer) {
+		this.SpellCaster = pSpellCaster;
+		this.Player = pPlayer;
 	}
 
-	public static SyncCapabilityPacket decode(FriendlyByteBuf buf) {
-		return new SyncCapabilityPacket(new SpellCasterCapability(buf.readNbt()), buf.readUUID());
+	public static SyncCapabilityPacket decode (FriendlyByteBuf pBuf) {
+		return new SyncCapabilityPacket(new SpellCasterCapability(pBuf.readNbt()), pBuf.readUUID());
 	}
 
-	public void encode(FriendlyByteBuf buf) {
-		buf.writeNbt(spell_caster.serializeNBT());
-		buf.writeUUID(player);
+	public void encode (FriendlyByteBuf pBuf) {
+		pBuf.writeNbt(SpellCaster.serializeNBT());
+		pBuf.writeUUID(Player);
 	}
 
 	public static class Handler {
-		public static void onMessageReceived(final SyncCapabilityPacket message, Supplier<NetworkEvent.Context> ctxSupplier) {
-			NetworkEvent.Context ctx = ctxSupplier.get();
+		public static void onMessageReceived (final SyncCapabilityPacket pMessage, Supplier<NetworkEvent.Context> pCTX) {
+			NetworkEvent.Context ctx = pCTX.get();
 			ctx.enqueueWork(() -> {
-				LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
+				LogicalSide side_received = ctx.getDirection().getReceptionSide();
 				ctx.setPacketHandled(true);
-				if (sideReceived != LogicalSide.CLIENT) {
+				if (side_received != LogicalSide.CLIENT) {
 					return;
 				}
-				Optional<Level> clientWorld = LogicalSidedProvider.CLIENTWORLD.get(sideReceived);
-				if (clientWorld.isEmpty()) {
+				Optional<Level> client_world = LogicalSidedProvider.CLIENTWORLD.get(side_received);
+				if (client_world.isEmpty()) {
 					return;
 				}
-				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> processMessage(clientWorld.get(), message));
+				DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> processMessage(client_world.get(), pMessage));
 			});
 			ctx.setPacketHandled(true);
 		}
 
-		private static void processMessage(Level worldClient, SyncCapabilityPacket message) {
-			CapabilityRegistry.getSpellCaster(worldClient.getPlayerByUUID(message.player)).ifPresent(cap -> {
-				cap.setMaxMana(message.spell_caster.getMaxMana());
-				cap.setMana(message.spell_caster.getMana());
-				cap.setEquippedSpells(message.spell_caster.getEquippedSpells());
-				cap.setSpells(message.spell_caster.getSpells());
+		private static void processMessage (Level pLevel, SyncCapabilityPacket pMessage) {
+			CapabilityRegistry.getSpellCaster(pLevel.getPlayerByUUID(pMessage.Player)).ifPresent(cap -> {
+				cap.setMaxMana(pMessage.SpellCaster.getMaxMana());
+				cap.setMana(pMessage.SpellCaster.getMana());
+				cap.setEquippedSpells(pMessage.SpellCaster.getEquippedSpells());
+				cap.setSpells(pMessage.SpellCaster.getSpells());
 			});
 		}
 	}

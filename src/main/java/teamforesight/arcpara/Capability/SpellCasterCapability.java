@@ -15,105 +15,105 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpellCasterCapability implements ISpellCaster {
-	private float maxMana;
-	private float mana;
-	private String[] equippedSpells;
+	private float MaxMana;
+	private float Mana;
+	private String[] EquippedSpells;
 	/**
 	 * Holds all spells the player has, spell data is NOT synced or saved.
 	 */
-	private List<Spell> spells;
+	private List<Spell> Spells;
 
-	public SpellCasterCapability(CompoundTag nbt) {
-		maxMana = 100f;
-		mana = maxMana;
-		equippedSpells = new String[]{"empty", "empty", "empty", "empty", "empty", "empty"};
-		spells = new ArrayList<>();
-		deserializeNBT(nbt);
+	public SpellCasterCapability (CompoundTag pNbt) {
+		MaxMana = 100f;
+		Mana = MaxMana;
+		EquippedSpells = new String[]{"empty", "empty", "empty", "empty", "empty", "empty"};
+		Spells = new ArrayList<>();
+		deserializeNBT(pNbt);
 	}
 
-	public SpellCasterCapability() {
+	public SpellCasterCapability () {
 		this(new CompoundTag());
-		maxMana = 100f;
-		mana = maxMana;
-		equippedSpells = new String[]{"empty", "empty", "empty", "empty", "empty", "empty"};
-		spells = new ArrayList<>();
+		MaxMana = 100f;
+		Mana = MaxMana;
+		EquippedSpells = new String[]{"empty", "empty", "empty", "empty", "empty", "empty"};
+		Spells = new ArrayList<>();
 	}
 
 	@Override
-	public float getMaxMana() {
-		return maxMana;
+	public float getMaxMana () {
+		return MaxMana;
 	}
 
 	@Override
-	public void setMaxMana(float amount) {
-		maxMana = amount;
-		if (mana > maxMana) {
-			mana = maxMana;
+	public void setMaxMana (float pAmount) {
+		MaxMana = pAmount;
+		if (Mana > MaxMana) {
+			Mana = MaxMana;
 		}
 	}
 
 	@Override
-	public float getMana() {
-		return mana;
+	public float getMana () {
+		return Mana;
 	}
 
 	@Override
-	public void setMana(float amount) {
-		mana = amount;
+	public void setMana (float pAmount) {
+		Mana = pAmount;
 	}
 
 	@Override
-	public boolean canSpendMana(float amount) {
-		return amount <= getMana();
+	public boolean canSpendMana (float pAmount) {
+		return pAmount <= getMana();
 	}
 
 	@Override
-	public void spendMana(float amount) {
-		setMana(getMana() - amount);
+	public void spendMana (float pAmount) {
+		setMana(getMana() - pAmount);
 	}
 
 	@Override
-	public void addMana(float amount) {
-		setMana(Math.min(getMaxMana(), getMana() + amount));
+	public void addMana (float pAmount) {
+		setMana(Math.min(getMaxMana(), getMana() + pAmount));
 	}
 
 	@Override
-	public List<Spell> getSpells() {
-		return spells;
+	public List<Spell> getSpells () {
+		return Spells;
 	}
 
 	@Override
-	public void setSpells(List<Spell> spells) {
-		this.spells = spells;
+	public void setSpells (List<Spell> pSpells) {
+		this.Spells = pSpells;
 	}
 
 	@Override
-	public Spell getSpell(ResourceLocation id) {
-		return spells.stream().filter(s -> s.id.equals(id)).findFirst().orElse(null);
+	public Spell getSpell (ResourceLocation pID) {
+		return Spells.stream().filter(s -> s.ID.equals(pID)).findFirst().orElse(null);
 	}
 
 	@Override
-	public String[] getEquippedSpells() {
-		return equippedSpells;
+	public String[] getEquippedSpells () {
+		return EquippedSpells;
 	}
 
 	@Override
-	public void setEquippedSpells(String[] spells) {
-		equippedSpells = spells;
+	public void setEquippedSpells (String[] pSpells) {
+		EquippedSpells = pSpells;
 	}
 
 	@Override
-	public void setEquippedSpell(int slot, String spell_id) {
-		getEquippedSpells()[slot] = spell_id;
+	public void setEquippedSpell (int pSlot, String pSpellID) {
+		getEquippedSpells()[pSlot] = pSpellID;
 	}
 
 	@Override
-	public String getEquippedSpell(int slot) {
-		return getEquippedSpells()[slot];
+	public String getEquippedSpell (int pSlot) {
+		return getEquippedSpells()[pSlot];
 	}
 
 	@Override
-	public CompoundTag serializeNBT() {
+	public CompoundTag serializeNBT () {
 		CompoundTag tag = new CompoundTag();
 		tag.putFloat("max_mana", getMaxMana());
 		tag.putFloat("mana", getMana());
@@ -122,22 +122,22 @@ public class SpellCasterCapability implements ISpellCaster {
 		}
 		tag.putInt("spellcount", getSpells().size());
 		for (int i = 0; i < getSpells().size(); i++) {
-			tag.putString("spell_list_" + i, getSpells().get(i).id.toString());
+			tag.putString("spell_list_" + i, getSpells().get(i).ID.toString());
 		}
 		return tag;
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag nbt) {
-		setMaxMana(nbt.getFloat("max_mana"));
-		setMana(nbt.getFloat("mana"));
+	public void deserializeNBT (CompoundTag pNbt) {
+		setMaxMana(pNbt.getFloat("max_mana"));
+		setMana(pNbt.getFloat("mana"));
 		for (int i = 0; i < 6; i++) {
-			setEquippedSpell(i, nbt.getString("equipped_spell_" + i));
+			setEquippedSpell(i, pNbt.getString("equipped_spell_" + i));
 		}
-		int count = nbt.getInt("spellcount");
+		int count = pNbt.getInt("spellcount");
 		getSpells().clear();
 		for (int i = 0; i < count; i++) {
-			Spell s = SpellRegistry.createSpell(ResourceLocation.tryParse(nbt.getString("spell_list_" + i)));
+			Spell s = SpellRegistry.createSpell(ResourceLocation.tryParse(pNbt.getString("spell_list_" + i)));
 			if (s != null) { // && !getSpells().contains(s)
 				getSpells().add(s);
 			}
@@ -146,22 +146,22 @@ public class SpellCasterCapability implements ISpellCaster {
 	}
 
 	public static class Provider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-		private final ISpellCaster spell_caster = new SpellCasterCapability();
-		private final LazyOptional<ISpellCaster> optionalData = LazyOptional.of(() -> spell_caster);
+		private final ISpellCaster SpellCaster = new SpellCasterCapability();
+		private final LazyOptional<ISpellCaster> OptionalData = LazyOptional.of(() -> SpellCaster);
 
 		@Override
-		public CompoundTag serializeNBT() {
-			return this.spell_caster.serializeNBT();
+		public CompoundTag serializeNBT () {
+			return this.SpellCaster.serializeNBT();
 		}
 
 		@Override
-		public void deserializeNBT(CompoundTag nbt) {
-			this.spell_caster.deserializeNBT(nbt);
+		public void deserializeNBT (CompoundTag nbt) {
+			this.SpellCaster.deserializeNBT(nbt);
 		}
 
 		@Override
-		public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-			return CapabilityRegistry.spell_caster.orEmpty(cap, this.optionalData);
+		public <T> LazyOptional<T> getCapability (Capability<T> cap, Direction side) {
+			return CapabilityRegistry.SPELL_CASTER.orEmpty(cap, this.OptionalData);
 		}
 	}
 }
