@@ -33,6 +33,7 @@ public class BrickshotSpell extends Spell {
 				pebble.castShot(pPlayer, i * 5);
 				pPlayer.level().addFreshEntity(pebble);
 			}
+			consumeMana(pPlayer, ManaCostPrimary);
 		}
 	}
 }

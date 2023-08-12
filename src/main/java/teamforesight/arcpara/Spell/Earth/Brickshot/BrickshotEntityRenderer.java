@@ -41,8 +41,8 @@ public class BrickshotEntityRenderer extends EntityRenderer<BrickshotEntity> {
 	public static LayerDefinition createModel () {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition part = mesh.getRoot();
-		part.addOrReplaceChild("pebble", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -4.0F, 4.0F, 4.0F, 4.0F), PartPose.offset(2, 2, 2));
-		return LayerDefinition.create(mesh, 32, 32);
+		part.addOrReplaceChild("pebble", CubeListBuilder.create().texOffs(0, 0).addBox(0F, 0F, 0F, 2.0F, 2.0F, 2.0F), PartPose.offset(-1, -1, -1));
+		return LayerDefinition.create(mesh, 16, 16);
 	}
 
 	@Override

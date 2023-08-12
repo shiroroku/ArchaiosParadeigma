@@ -101,13 +101,19 @@ public class BrickshotEntity extends Projectile {
 	@Override
 	protected void onHitBlock (BlockHitResult pResult) {
 		super.onHitBlock(pResult);
-		if (this.level().isClientSide()) {
-			this.level().addParticle(ParticleTypes.CLOUD, this.getX(), this.getY(), this.getZ(), 0, 0.1f, 0);
-		}
 		if (!this.level().isClientSide()) {
 			this.discard();
 		}
 
+	}
+
+
+	@Override
+	public void remove (RemovalReason pReason) {
+		super.remove(pReason);
+		if (this.level().isClientSide()) {
+			this.level().addParticle(ParticleTypes.CLOUD, this.getX(), this.getY(), this.getZ(), 0, 0.1f, 0);
+		}
 	}
 
 	@Override
