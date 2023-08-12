@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import teamforesight.arcpara.Registry.EntityRegistry;
 import teamforesight.arcpara.Registry.ItemRegistry;
 
 
@@ -17,5 +18,6 @@ public class ArcPara {
 	public ArcPara () {
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		ItemRegistry.ITEMS.register(bus);
+		EntityRegistry.ENTITIES.register(bus);
 	}
 }

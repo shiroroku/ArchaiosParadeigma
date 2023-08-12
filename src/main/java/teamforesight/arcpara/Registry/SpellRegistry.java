@@ -7,6 +7,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import teamforesight.arcpara.ArcPara;
 import teamforesight.arcpara.Spell.DebugSpell;
+import teamforesight.arcpara.Spell.Earth.Brickshot.BrickshotSpell;
 import teamforesight.arcpara.Spell.Fire.SparkSpell;
 import teamforesight.arcpara.Spell.Spell;
 
@@ -19,6 +20,7 @@ public class SpellRegistry {
 	public static HashMap<ResourceLocation, Supplier<? extends Spell>> SPELLS = new HashMap<>() {{
 		put(new ResourceLocation(ArcPara.MODID, "debug"), DebugSpell::new);
 		put(new ResourceLocation(ArcPara.MODID, "spark"), SparkSpell::new);
+		put(new ResourceLocation(ArcPara.MODID, "brickshot"), BrickshotSpell::new);
 	}};
 
 	public static Spell createSpell (ResourceLocation id) {
